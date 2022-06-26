@@ -15,7 +15,7 @@ ZoomMtg.i18n.reload("ko-KO");
 //ZoomMtg.i18n.reload("en-US");
 
 function App() {
-  const [url, setUrl] = useState("https://us04web.zoom.us/j/78435477513?pwd=UFe3yGJ2VdgGa9HQ_b1m4mneBsJh-M.1");
+  const [url, setUrl] = useState("");
   const [name, setName] = useState("");
   const [isEnter, setIsEnter] = useState(false);
   const [isHost, setIsHost] = useState("0");
