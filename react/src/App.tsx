@@ -21,10 +21,10 @@ function App() {
   const [isHost, setIsHost] = useState("0");
 
   useEffect(() => {
-    if (document) {
-      const url = document.location.href.split("?url=")[1];
-      if (url) setUrl(url);
-    }
+  //   if (document) {
+  //     const url = document.location.href.split("?url=")[1];
+  //     if (url) setUrl(url);
+  //   }
   }, []);
 
   const sdkKey = "xPN1ctkMLTAqaWGsE7FDSonJSEOO8B0XtQf8";
@@ -49,7 +49,8 @@ function App() {
     
     const root = document.getElementById("zmmtg-root");
     if (!root) return;
-    root.style.display = "block"; //줌 강제로 보이게 하는건인듯
+    console.log(document.getElementsByClassName("footer__btns-container"))
+    root.style.display = "flex"; //줌 강제로 보이게 하는건인듯
     
     const setting: typeof initArgs = {
       leaveUrl: leaveUrl,
@@ -71,6 +72,7 @@ function App() {
       videoDrag: true,
       //sharingMode: string,
       videoHeader: false,
+      // virtualBackground: true,
       isLockBottom: false,
       isSupportNonverbal: true,
       isShowJoiningErrorDialog: true,
@@ -119,7 +121,7 @@ function App() {
             id="트레이너"
             name="drone"
             value="1"
-            checked={isHost == "1"}
+            checked={isHost === "1"}
             onClick={() => setIsHost("1")}
           />
           <label htmlFor="트레이너" style={{ padding: "0 0 0 4px" }}>
@@ -131,14 +133,16 @@ function App() {
             id="참가자"
             name="drone"
             value="0"
-            checked={isHost == "0"}
+            checked={isHost === "0"}
             onClick={() => setIsHost("0")}
           />
           <label htmlFor="참가자" style={{ padding: "0 0 0 4px" }}>
             참가자
           </label>
         </div>
-
+        <h2>참가 링크</h2>
+        <input value={url} onChange={(e: any) => setUrl(e.target.value)} />
+        <br />
         <h2>참가자 이름</h2>
         <input value={name} onChange={(e: any) => setName(e.target.value)} />
         <br />
