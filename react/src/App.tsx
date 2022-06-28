@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import { initArgs, ZoomMtg } from "@zoomus/websdk";
 import { MainPage } from "./page";
+import Capture from "./components/Capture";
 
 ZoomMtg.setZoomJSLib("https://source.zoom.us/2.4.5/lib", "/av");
 
@@ -15,10 +16,13 @@ ZoomMtg.i18n.reload("ko-KO");
 //ZoomMtg.i18n.reload("en-US");
 
 function App() {
-  const [url, setUrl] = useState("https://us04web.zoom.us/j/78435477513?pwd=UFe3yGJ2VdgGa9HQ_b1m4mneBsJh-M.1");
+  const [url, setUrl] = useState(
+    "https://us05web.zoom.us/j/87072356922?pwd=UWMzamJZK1N4YmU0UGdjRW9vQmk4Zz09"
+  );
   const [name, setName] = useState("");
   const [isEnter, setIsEnter] = useState(false);
   const [isHost, setIsHost] = useState("0");
+  const [photoList, setPhotoList] = useState([]);
 
   useEffect(() => {
     if (document) {
@@ -28,7 +32,10 @@ function App() {
   }, []);
 
   const sdkKey = "xPN1ctkMLTAqaWGsE7FDSonJSEOO8B0XtQf8";
-  const meetingNumber = url.slice(url.indexOf("/j/") + 3, url.indexOf("pwd=") - 1);
+  const meetingNumber = url.slice(
+    url.indexOf("/j/") + 3,
+    url.indexOf("pwd=") - 1
+  );
   const leaveUrl = "http://localhost:3000";
   const userEmail = "";
   const passWord = url.slice(url.indexOf("pwd=") + 4, url.length);
@@ -44,13 +51,16 @@ function App() {
       success: () => console.info("generateSDKSignature success"),
       error: (e: any) => console.info("generateSDKSignature fail", e),
     });
-  function getSignature(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+  function getSignature(
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) {
     event.preventDefault();
-    
+
     const root = document.getElementById("zmmtg-root");
+
     if (!root) return;
     root.style.display = "block"; //줌 강제로 보이게 하는건인듯
-    
+
     const setting: typeof initArgs = {
       leaveUrl: leaveUrl,
       showMeetingHeader: true,
@@ -75,7 +85,8 @@ function App() {
       isSupportNonverbal: true,
       isShowJoiningErrorDialog: true,
 
-      inviteUrlFormat: "https://localhost:3000/?url=https://us04web.zoom.us/j/{0}?pwd={1}",
+      inviteUrlFormat:
+        "https://localhost:3000/?url=https://us04web.zoom.us/j/{0}?pwd={1}",
 
       meetingInfo: ["participant"],
       disableVoIP: false,
@@ -94,7 +105,11 @@ function App() {
       userEmail: userEmail,
       passWord: passWord,
       tk: registrantToken,
-      success: (success: any) => setIsEnter(true),
+      success: (success: any) => {
+        console.log("성공");
+        setIsEnter(true);
+      },
+
       error: (error: any) => console.log(error),
     };
     ZoomMtg.init({
@@ -110,7 +125,7 @@ function App() {
         <br />
         <p>주소 창에 zoom url을 입력하면 해당 ZOOM으로 접근이 가능합니다.</p>
         <br />
-        <p>예: http://localhost:3000/?url=https://us04web.zoom.us/j/78435477513?pwd=UFe3yGJ2VdgGa9HQ_b1m4mneBsJh-M.1</p>
+        <p>예: http://localhost:3000/?url={url}</p>
         <br />
 
         <div style={{ display: "flex", justifyContent: "center" }}>
@@ -146,9 +161,21 @@ function App() {
       </main>
 
       {isEnter && (
-        <div style={{ position: "absolute", top: 0, zIndex: 1, right: 0, display: "flex", wordWrap: "break-word" }}>
-          <MainPage />
-        </div>
+        <>
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              zIndex: 1,
+              right: 0,
+              display: "flex",
+              wordWrap: "break-word",
+            }}
+          >
+            <MainPage photoList={photoList} />
+          </div>
+          <Capture setPhotoList={setPhotoList} photoList={photoList} />
+        </>
       )}
     </div>
   );
