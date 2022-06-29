@@ -29,7 +29,7 @@ function Capture({ setPhotoList, photoList }: any) {
   useEffect(() => {
     console.log(image);
     if (image) {
-      setPhotoList([...photoList, image]);
+      setPhotoList([image, ...photoList]);
     }
   }, [image]);
 
