@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Children, useEffect, useState } from "react";
 
 import "./App.css";
 import { initArgs, ZoomMtg } from "@zoomus/websdk";
@@ -44,13 +44,28 @@ function App() {
       success: () => console.info("generateSDKSignature success"),
       error: (e: any) => console.info("generateSDKSignature fail", e),
     });
+  
+  // const onFindId = () => {
+  //   //id 잡아오기
+  //   const idRef = document.querySelector("#wc-container-left") as any;
+  //   console.log(idRef)
+  //   // idRef.style.width = '88%'
+  //   // 완료!
+  //   console.log(idRef)
+  // };
+  // onFindId()
+
+    
   function getSignature(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     event.preventDefault();
     
     const root = document.getElementById("zmmtg-root");
+
     if (!root) return;
-    console.log(document.getElementsByClassName("footer__btns-container"))
-    root.style.display = "flex"; //줌 강제로 보이게 하는건인듯
+
+    root.style.display = "flex"; //줌 body.style 설정
+    root.style.width = "88%";
+
     
     const setting: typeof initArgs = {
       leaveUrl: leaveUrl,
@@ -112,7 +127,7 @@ function App() {
         <br />
         <p>주소 창에 zoom url을 입력하면 해당 ZOOM으로 접근이 가능합니다.</p>
         <br />
-        <p>예: http://localhost:3000/?url=https://us04web.zoom.us/j/78435477513?pwd=UFe3yGJ2VdgGa9HQ_b1m4mneBsJh-M.1</p>
+        <p>예: https://us05web.zoom.us/j/82881994686?pwd=NktPN0hUTWFPQWZnMk9KY1ZuUHdNQT09</p>
         <br />
 
         <div style={{ display: "flex", justifyContent: "center" }}>
