@@ -174,7 +174,7 @@ function App() {
               wordWrap: "break-word",
             }}
           >
-            <MainPage photoList={photoList} />
+            <MainPage photoList={photoList} setPhotoList={setPhotoList}/>
           </div>
           <span>
           <Capture setPhotoList={setPhotoList} photoList={photoList} />
