@@ -18,7 +18,7 @@ ZoomMtg.i18n.reload("ko-KO");
 
 function App() {
   const [url, setUrl] = useState(
-    "https://zoom.us/j/94143171561?pwd=SFVKcUlzZEJLR045bC9wNWNRUGt2dz09"
+    "https://zoom.us/j/93282423294?pwd=RDFDOEd6b3BqVXpOV0xsVUcrVHN3UT09"
   );
   const [name, setName] = useState("");
   const [isEnter, setIsEnter] = useState(false);
@@ -165,6 +165,7 @@ function App() {
         <>
           <div
             style={{
+              width:"25%",
               position: "absolute",
               top: 0,
               zIndex: 1,

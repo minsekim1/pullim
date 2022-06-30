@@ -2,10 +2,11 @@ export function MainPage({ photoList }: any) {
   console.log(photoList.length);
   return (
     <div
+      id = "pullim-page"
       style={{
-        width: 300,
+        width: "0%",
         height: "100vh",
-        backgroundColor: "rgba(0,0,0,0.4)",
+        backgroundColor: "rgba(0,255,255,0.4)",
         color: "white",
         display: "flex",
         flexDirection: "column",
@@ -19,7 +20,7 @@ export function MainPage({ photoList }: any) {
             <div
               key={i}
               style={{
-                width: "250px",
+                width: "100%",
                 height: "250px",
                 marginBottom: "10px",
                 border: "1px solid white",
