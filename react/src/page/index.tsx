@@ -45,12 +45,12 @@ export function MainPage({ photoList, setPhotoList }: any={Array, Function}) {
       style={{
         width: "0%",
         height: "100vh",
-        backgroundColor: "rgba(0,255,255,0.4)",
+        backgroundColor: "rgba(0,255,255)",
         color: "white",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        overflow: "scroll",
+        overflow: "scroll"
       }}
     >
       <div style={{ minHeight: "1000px" }}>
@@ -60,7 +60,7 @@ export function MainPage({ photoList, setPhotoList }: any={Array, Function}) {
               key={i}
               ref={el => (photoRef.current[i] = el)}
               style={{
-                width: "100%",
+                width: "400px",
                 height: "250px",
                 marginBottom: "10px",
                 border: "1px solid white",
