@@ -1,11 +1,11 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "app.ts",
+  "main": "index.ts",
   "repository": "https://github.com/minsekim1/pullim",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node src/app.ts"
+    "start": "ts-node src/index.ts"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

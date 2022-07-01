@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useScreenshot } from "use-screenshot-hook";
 import { UseScreenshotProps } from "use-screenshot-hook/dist/types";
+import axios from "axios";
 
 function Capture({ setPhotoList, photoList }: any) {
   //ref는 고정적으로 값을 가지고 있음
@@ -18,6 +19,19 @@ function Capture({ setPhotoList, photoList }: any) {
     //클릭 완료!
     setIsClick(true);
   };
+
+  const savePhoto = async() => {
+    let formData = new FormData();
+    photoList.forEach((photo: string, i: number) => {
+      const data = new Blob([photo], {type: 'image/png'});
+      formData.append("photos", data, "photo" + i);
+    })
+    const response = await axios.post('/photo', formData).then((res) =>res.data);
+    if(response.success){
+      alert('저장 완료!');
+    }
+  }
+
   //클릭했을 때 반응
   useEffect(() => {
     if (isClick) {
@@ -50,13 +64,16 @@ function Capture({ setPhotoList, photoList }: any) {
         >
           Screenshot
         </button>
+        <button style={{
+          width: "100px",
+          height: "50px",
+          background: "red",
+          borderRadius: "5px",
+          color: "white",
+        }} onClick={savePhoto}>
+          사진저장
+        </button>
       </div>
-      {/* {
-        image && 
-        <div style={{position: "absolute", top: "50%", left: "50%", width: "200px", height: "200px", border: "1px solid white", zIndex: 1}}>
-          <img style={{width: "100%", height: "100%"}} src={image} alt="asa"/>
-        </div>
-      } */}
     </>
   );
 }

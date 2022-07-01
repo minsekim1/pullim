@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 export function MainPage({ photoList, setPhotoList }: any={Array, Function}) {
   const photoRef = useRef([]) as any;
