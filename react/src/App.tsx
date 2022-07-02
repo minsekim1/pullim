@@ -4,6 +4,7 @@ import "./App.css";
 import { initArgs, ZoomMtg } from "@zoomus/websdk";
 import { MainPage } from "./page";
 import Capture from "./components/Capture";
+import Fitpage from "./components/Fitpage";
 
 ZoomMtg.setZoomJSLib("https://source.zoom.us/2.4.5/lib", "/av");
 
@@ -17,7 +18,7 @@ ZoomMtg.i18n.reload("ko-KO");
 
 function App() {
   const [url, setUrl] = useState(
-    "https://us05web.zoom.us/j/87072356922?pwd=UWMzamJZK1N4YmU0UGdjRW9vQmk4Zz09"
+    "https://zoom.us/j/92062736514?pwd=Nnh0NE4zRHJMZDA1eDljZ2hVY0JMUT09"
   );
   const [name, setName] = useState("");
   const [isEnter, setIsEnter] = useState(false);
@@ -164,6 +165,7 @@ function App() {
         <>
           <div
             style={{
+              width:"25%",
               position: "absolute",
               top: 0,
               zIndex: 1,
@@ -174,7 +176,10 @@ function App() {
           >
             <MainPage photoList={photoList} setPhotoList={setPhotoList}/>
           </div>
+          <span>
           <Capture setPhotoList={setPhotoList} photoList={photoList} />
+          <Fitpage/>
+          </span>
         </>
       )}
     </div>

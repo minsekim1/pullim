@@ -53,6 +53,7 @@ function Capture({ setPhotoList, photoList }: any) {
         style={{ position: "absolute", bottom: 10, zIndex: 1, right: "15%" }}
       >
         <button
+          id = "screenshot_btn"
           style={{
             width: "100px",
             height: "50px",

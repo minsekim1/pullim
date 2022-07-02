@@ -8,6 +8,7 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "@zoom/appssdk": "^0.16.0",
     "@zoomus/websdk": "^2.4.5",
     "axios": "^0.27.2",
     "react": "^17.0.1",
@@ -25,8 +26,7 @@
   },
   "eslintConfig": {
     "extends": [
-      "react-app",
-      "react-app/jest"
+      "react-app"
     ]
   },
   "browserslist": {

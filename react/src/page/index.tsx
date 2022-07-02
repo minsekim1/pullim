@@ -41,15 +41,16 @@ export function MainPage({ photoList, setPhotoList }: any={Array, Function}) {
   },[photoList]);
   return (
     <div
+      id = "pullim-page"
       style={{
-        width: 300,
+        width: "0%",
         height: "100vh",
-        backgroundColor: "rgba(0,0,0,0.4)",
+        backgroundColor: "rgba(255,255,255)",
         color: "white",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        overflow: "scroll",
+        overflow: "scroll"
       }}
     >
       <div style={{ minHeight: "1000px" }}>
@@ -59,7 +60,7 @@ export function MainPage({ photoList, setPhotoList }: any={Array, Function}) {
               key={i}
               ref={el => (photoRef.current[i] = el)}
               style={{
-                width: "250px",
+                width: "400px",
                 height: "250px",
                 marginBottom: "10px",
                 border: "1px solid white",
