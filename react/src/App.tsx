@@ -19,9 +19,7 @@ ZoomMtg.i18n.reload("ko-KO");
 //ZoomMtg.i18n.reload("en-US");
 
 function App() {
-  const [url, setUrl] = useState(
-    "https://zoom.us/j/92062736514?pwd=Nnh0NE4zRHJMZDA1eDljZ2hVY0JMUT09"
-  );
+  const [url, setUrl] = useState("https://zoom.us/j/92062736514?pwd=Nnh0NE4zRHJMZDA1eDljZ2hVY0JMUT09");
   const [name, setName] = useState("");
   const [isEnter, setIsEnter] = useState(false);
   const [isHost, setIsHost] = useState("0");
@@ -30,6 +28,7 @@ function App() {
   const [isModal, setIsModal] = useState(false);
   const [src, setSrc] = useState("");
 
+  const [isBodypix, setIsBodypix] = useState(false);
   useEffect(() => {
     if (document) {
       const url = document.location.href.split("?url=")[1];
@@ -38,10 +37,7 @@ function App() {
   }, []);
 
   const sdkKey = "xPN1ctkMLTAqaWGsE7FDSonJSEOO8B0XtQf8";
-  const meetingNumber = url.slice(
-    url.indexOf("/j/") + 3,
-    url.indexOf("pwd=") - 1
-  );
+  const meetingNumber = url.slice(url.indexOf("/j/") + 3, url.indexOf("pwd=") - 1);
   const leaveUrl = "http://localhost:3000";
   const userEmail = "";
   const passWord = url.slice(url.indexOf("pwd=") + 4, url.length);
@@ -57,9 +53,7 @@ function App() {
       success: () => console.info("generateSDKSignature success"),
       error: (e: any) => console.info("generateSDKSignature fail", e),
     });
-  function getSignature(
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) {
+  function getSignature(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     event.preventDefault();
 
     const root = document.getElementById("zmmtg-root");
@@ -91,8 +85,7 @@ function App() {
       isSupportNonverbal: true,
       isShowJoiningErrorDialog: true,
 
-      inviteUrlFormat:
-        "https://localhost:3000/?url=https://us04web.zoom.us/j/{0}?pwd={1}",
+      inviteUrlFormat: "https://localhost:3000/?url=https://us04web.zoom.us/j/{0}?pwd={1}",
 
       meetingInfo: ["participant"],
       disableVoIP: false,
@@ -126,7 +119,6 @@ function App() {
   }
   return (
     <div className="App">
-      
       <main>
         <h1>Zoom Meeting SDK Sample React</h1>
         <br />
@@ -189,42 +181,39 @@ function App() {
             }}
           >
             {currentPage === "CaptureList" && (
-              <CaptureList
-                photoList={photoList}
-                setPhotoList={setPhotoList}
-                setIsModal={setIsModal}
-                setSrc={setSrc}
-              />
+              <CaptureList photoList={photoList} setPhotoList={setPhotoList} setIsModal={setIsModal} setSrc={setSrc} />
             )}
-            {currentPage === "RecordAndPrescription" && (
-              <RecordAndPrescription />
-            )}
+            {currentPage === "RecordAndPrescription" && <RecordAndPrescription />}
             {currentPage === "CheckTool" && <CheckTool />}
           </div>
-          <ButtonGroup
-            setPhotoList={setPhotoList}
-            photoList={photoList}
-            setCurrentPage={setCurrentPage}
-          />
-           
-           <div
-      style={{
-        position:'absolute',
-        left:0,
-        zIndex:99,
-        top:0,
-        width: 300,
-        height: "100vh",
-        backgroundColor: "rgba(0,0,0,0.4)",
-        color: "white",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        overflow: "scroll",
-      }}
-    >
-      <div style={{ minHeight: "1000px" }}> <BodyPixView/></div></div>
-      
+          <ButtonGroup setPhotoList={setPhotoList} photoList={photoList} setCurrentPage={setCurrentPage} />
+
+          <div style={{ position: "absolute", zIndex: 99999,top:400, left:0 }}>
+            <button onClick={() => setIsBodypix((prev) => !prev)} style={{color:'white'}} >그리드전환</button>
+          </div>
+          {isBodypix && (
+            <div
+              style={{
+                position: "absolute",
+                left: 0,
+                zIndex: 99999999999,
+                top: 0,
+                width: 300,
+                height: "60vh",
+                backgroundColor: "rgba(0,0,0,0.4)",
+                color: "white",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                overflow: "scroll",
+              }}
+            >
+              <div style={{ minHeight: "1000px" }}>
+                <BodyPixView />
+              </div>
+            </div>
+          )}
+
           {isModal && (
             <div
               style={{
@@ -235,12 +224,16 @@ function App() {
                 left: "10%",
               }}
             >
-              <img style={{ width: "100%" }} onClick={() =>{
-                setIsModal(false);
-              }} src={src} alt="aa" />
+              <img
+                style={{ width: "100%" }}
+                onClick={() => {
+                  setIsModal(false);
+                }}
+                src={src}
+                alt="aa"
+              />
             </div>
           )}
-          
         </>
       )}
     </div>
