@@ -1,12 +1,11 @@
 import axios from "axios";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 export default function CaptureList(
-  { photoList, setPhotoList }: any = { Array, Function }
+  { photoList, setPhotoList, setIsModal, setSrc }: any = { Array, Function }
 ) {
   const photoRef = useRef([]) as any;
   const buttonRef = useRef([]) as any;
-
   const savePhoto = async () => {
     let formData = new FormData();
     photoList.forEach((photo: string, i: number) => {
@@ -101,6 +100,10 @@ export default function CaptureList(
                   style={{ width: "100%", height: "100%" }}
                   src={photo}
                   alt="asa"
+                  onClick={() =>{
+                    setIsModal(true);
+                    setSrc(photoList[i]);
+                  }}
                 />
                 <button
                   ref={(el) => (buttonRef.current[i] = el)}

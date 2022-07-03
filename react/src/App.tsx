@@ -25,7 +25,9 @@ function App() {
   const [isEnter, setIsEnter] = useState(false);
   const [isHost, setIsHost] = useState("0");
   const [photoList, setPhotoList] = useState([]);
-  const [currentPage, setCurrentPage] = useState('');
+  const [currentPage, setCurrentPage] = useState("");
+  const [isModal, setIsModal] = useState(false);
+  const [src, setSrc] = useState("");
 
   useEffect(() => {
     if (document) {
@@ -180,15 +182,43 @@ function App() {
               flexDirection: "column",
               alignItems: "center",
               borderRadius: "1% 0 0 1%",
-              overflow: "hidden"
+              overflow: "hidden",
               // wordWrap: "break-word",
             }}
           >
-            {currentPage==="CaptureList" && <CaptureList photoList={photoList} setPhotoList={setPhotoList} />}
-            {currentPage==="RecordAndPrescription" && <RecordAndPrescription/>}
-            {currentPage==="CheckTool" && <CheckTool/>}
+            {currentPage === "CaptureList" && (
+              <CaptureList
+                photoList={photoList}
+                setPhotoList={setPhotoList}
+                setIsModal={setIsModal}
+                setSrc={setSrc}
+              />
+            )}
+            {currentPage === "RecordAndPrescription" && (
+              <RecordAndPrescription />
+            )}
+            {currentPage === "CheckTool" && <CheckTool />}
           </div>
-          <ButtonGroup setPhotoList={setPhotoList} photoList={photoList} setCurrentPage={setCurrentPage}/>
+          <ButtonGroup
+            setPhotoList={setPhotoList}
+            photoList={photoList}
+            setCurrentPage={setCurrentPage}
+          />
+          {isModal && (
+            <div
+              style={{
+                zIndex: 1,
+                position: "absolute",
+                width: "1100px",
+                top: "10%",
+                left: "10%",
+              }}
+            >
+              <img style={{ width: "100%" }} onClick={() =>{
+                setIsModal(false);
+              }} src={src} alt="aa" />
+            </div>
+          )}
         </>
       )}
     </div>
