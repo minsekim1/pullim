@@ -63,7 +63,7 @@ export const BodyPixView = () => {
         <br /> <br />
         <BodyPixReactView options={options} visible={visible} start={start} onEvent={onEvent} />
         <br />
-        <div>
+        <div style={{zIndex: 99999}}>
             <video id="remoteDisplay" width='480px' height="360px" style={{ border: "1px solid #000" }} />
         </div>
     </div>

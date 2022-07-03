@@ -37,7 +37,7 @@ function ButtonGroup(
       style={{
         position: "absolute",
         bottom: "30%",
-        zIndex: 1,
+        zIndex: 100,
         left: "1%",
         width: "150px",
         minHeight: "180px",
