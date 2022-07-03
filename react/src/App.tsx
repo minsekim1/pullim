@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 
 import "./App.css";
 import { initArgs, ZoomMtg } from "@zoomus/websdk";
-import { MainPage } from "./page";
-import Capture from "./components/Capture";
+import CaptureList from "./page/CaptureList";
+import ButtonGroup from "./components/ButtonGroup";
+import RecordAndPrescription from "./page/RecordAndPrescription";
+import CheckTool from "./page/CheckTool";
 
 ZoomMtg.setZoomJSLib("https://source.zoom.us/2.4.5/lib", "/av");
 
@@ -17,12 +19,15 @@ ZoomMtg.i18n.reload("ko-KO");
 
 function App() {
   const [url, setUrl] = useState(
-    "https://us05web.zoom.us/j/87072356922?pwd=UWMzamJZK1N4YmU0UGdjRW9vQmk4Zz09"
+    "https://zoom.us/j/92062736514?pwd=Nnh0NE4zRHJMZDA1eDljZ2hVY0JMUT09"
   );
   const [name, setName] = useState("");
   const [isEnter, setIsEnter] = useState(false);
   const [isHost, setIsHost] = useState("0");
   const [photoList, setPhotoList] = useState([]);
+  const [currentPage, setCurrentPage] = useState("");
+  const [isModal, setIsModal] = useState(false);
+  const [src, setSrc] = useState("");
 
   useEffect(() => {
     if (document) {
@@ -163,18 +168,57 @@ function App() {
       {isEnter && (
         <>
           <div
+            id="pullim-page"
             style={{
+              width: "400px",
               position: "absolute",
               top: 0,
               zIndex: 1,
               right: 0,
-              display: "flex",
-              wordWrap: "break-word",
+              display: "none",
+              height: "100vh",
+              backgroundColor: "rgba(255,255,255)",
+              color: "white",
+              flexDirection: "column",
+              alignItems: "center",
+              borderRadius: "1% 0 0 1%",
+              overflow: "hidden",
+              // wordWrap: "break-word",
             }}
           >
-            <MainPage photoList={photoList} />
+            {currentPage === "CaptureList" && (
+              <CaptureList
+                photoList={photoList}
+                setPhotoList={setPhotoList}
+                setIsModal={setIsModal}
+                setSrc={setSrc}
+              />
+            )}
+            {currentPage === "RecordAndPrescription" && (
+              <RecordAndPrescription />
+            )}
+            {currentPage === "CheckTool" && <CheckTool />}
           </div>
-          <Capture setPhotoList={setPhotoList} photoList={photoList} />
+          <ButtonGroup
+            setPhotoList={setPhotoList}
+            photoList={photoList}
+            setCurrentPage={setCurrentPage}
+          />
+          {isModal && (
+            <div
+              style={{
+                zIndex: 1,
+                position: "absolute",
+                width: "1100px",
+                top: "10%",
+                left: "10%",
+              }}
+            >
+              <img style={{ width: "100%" }} onClick={() =>{
+                setIsModal(false);
+              }} src={src} alt="aa" />
+            </div>
+          )}
         </>
       )}
     </div>
