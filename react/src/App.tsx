@@ -6,6 +6,7 @@ import CaptureList from "./page/CaptureList";
 import ButtonGroup from "./components/ButtonGroup";
 import RecordAndPrescription from "./page/RecordAndPrescription";
 import CheckTool from "./page/CheckTool";
+import { BodyPixView } from "./page/Bodypix";
 
 ZoomMtg.setZoomJSLib("https://source.zoom.us/2.4.5/lib", "/av");
 
@@ -125,6 +126,7 @@ function App() {
   }
   return (
     <div className="App">
+      
       <main>
         <h1>Zoom Meeting SDK Sample React</h1>
         <br />
@@ -204,6 +206,25 @@ function App() {
             photoList={photoList}
             setCurrentPage={setCurrentPage}
           />
+           
+           <div
+      style={{
+        position:'absolute',
+        left:0,
+        zIndex:99,
+        top:0,
+        width: 300,
+        height: "100vh",
+        backgroundColor: "rgba(0,0,0,0.4)",
+        color: "white",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        overflow: "scroll",
+      }}
+    >
+      <div style={{ minHeight: "1000px" }}> <BodyPixView/></div></div>
+      
           {isModal && (
             <div
               style={{
@@ -219,6 +240,7 @@ function App() {
               }} src={src} alt="aa" />
             </div>
           )}
+          
         </>
       )}
     </div>
