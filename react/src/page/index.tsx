@@ -1,3 +1,5 @@
+import { BodyPixView } from "./Bodypix";
+
 export function MainPage({ photoList }: any) {
   console.log(photoList.length);
   return (
@@ -14,7 +16,8 @@ export function MainPage({ photoList }: any) {
       }}
     >
       <div style={{ minHeight: "1000px" }}>
-        {photoList.length !== 0 &&
+        <BodyPixView/>
+        {/* {photoList.length !== 0 &&
           photoList.map((photo: string, i: number) => (
             <div
               key={i}
@@ -31,8 +34,12 @@ export function MainPage({ photoList }: any) {
                 alt="asa"
               />
             </div>
-          ))}
+          ))} */}
       </div>
     </div>
   );
 }
+
+
+
+
