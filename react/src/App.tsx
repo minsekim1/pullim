@@ -29,6 +29,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState("");
   const [isModal, setIsModal] = useState(false);
   const [src, setSrc] = useState("");
+  const [isTensor, setIsTensor] = useState(false);
 
   useEffect(() => {
     if (document) {
@@ -206,15 +207,14 @@ function App() {
             photoList={photoList}
             setCurrentPage={setCurrentPage}
           />
-           
-           <div
+          {isTensor && <div
       style={{
         position:'absolute',
         left:0,
         zIndex:99,
         top:0,
         width: 300,
-        height: "100vh",
+        height: "80vh",
         backgroundColor: "rgba(0,0,0,0.4)",
         color: "white",
         display: "flex",
@@ -223,7 +223,8 @@ function App() {
         overflow: "scroll",
       }}
     >
-      <div style={{ minHeight: "1000px" }}> <BodyPixView/></div></div>
+      <div style={{ minHeight: "1000px" }}> <BodyPixView/></div></div>}
+           <button style={{position: "absolute", top: 0, left: "50%", zIndex: 99}} onClick={() => setIsTensor((prev)=>!prev)}>그리드배경버튼</button>
       
           {isModal && (
             <div
