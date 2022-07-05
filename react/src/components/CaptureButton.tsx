@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useScreenshot } from "use-screenshot-hook";
 import { UseScreenshotProps } from "use-screenshot-hook/dist/types";
+import { photoType } from "../types/photoType";
+
 
 function CaptureButton({ setPhotoList, photoList }: any) {
   //ref는 고정적으로 값을 가지고 있음
@@ -22,19 +24,19 @@ function CaptureButton({ setPhotoList, photoList }: any) {
   //캡처 이미지 저장하는 함수
   const setImage = async(image: string) =>{
     const now = new Date();
-      const fileName = `photo_${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}${now.getHours()}${now.getMinutes()}${now.getSeconds()}.png`;
+    const fileName = `photo_${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}${now.getHours()}${now.getMinutes()}${now.getSeconds()}.png`;
 
-      await fetch(image)
-        .then(res => res.blob())
-        .then(blob => {
-          const file = new File([blob], fileName,{ type: "image/png" });
-          const obj = {
-            image: image,
-            name: fileName,
-            file: file
-          }
-          setPhotoList([obj, ...photoList]);
-        });
+    await fetch(image)
+      .then(res => res.blob())
+      .then(blob => {
+        const file = new File([blob], fileName,{ type: "image/png" });
+        const obj:photoType = {
+          image: image,
+          name: fileName,
+          file: file
+        }
+        setPhotoList([obj, ...photoList]);
+      });
   }
 
   //클릭했을 때 반응

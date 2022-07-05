@@ -7,6 +7,7 @@ import ButtonGroup from "./components/ButtonGroup";
 import RecordAndPrescription from "./page/RecordAndPrescription";
 import CheckTool from "./page/CheckTool";
 import { BodyPixView } from "./page/Bodypix";
+import DiagnosticHistory from "./page/DiagnosticHistory";
 
 ZoomMtg.setZoomJSLib("https://source.zoom.us/2.4.5/lib", "/av");
 
@@ -181,7 +182,6 @@ function App() {
               display: "none",
               height: "100vh",
               backgroundColor: "rgba(255,255,255)",
-              color: "white",
               flexDirection: "column",
               alignItems: "center",
               borderRadius: "1% 0 0 1%",
@@ -198,9 +198,10 @@ function App() {
               />
             )}
             {currentPage === "RecordAndPrescription" && (
-              <RecordAndPrescription />
+              <RecordAndPrescription photoList={photoList}/>
             )}
             {currentPage === "CheckTool" && <CheckTool />}
+            {currentPage === "DiagnosticHistory" && <DiagnosticHistory/>}
           </div>
           <ButtonGroup
             setPhotoList={setPhotoList}
@@ -234,6 +235,7 @@ function App() {
                 width: "1100px",
                 top: "10%",
                 left: "10%",
+                border:"2.5px solid orange"
               }}
             >
               <img style={{ width: "100%" }} onClick={() =>{
@@ -241,7 +243,6 @@ function App() {
               }} src={src} alt="aa" />
             </div>
           )}
-          
         </>
       )}
     </div>
