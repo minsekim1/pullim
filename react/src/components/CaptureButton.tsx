@@ -18,6 +18,24 @@ function CaptureButton({ setPhotoList, photoList }: any) {
     //클릭 완료!
     setIsClick(true);
   };
+  
+  //캡처 이미지 저장하는 함수
+  const setImage = async(image: string) =>{
+    const now = new Date();
+      const fileName = `photo_${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}${now.getHours()}${now.getMinutes()}${now.getSeconds()}.png`;
+
+      await fetch(image)
+        .then(res => res.blob())
+        .then(blob => {
+          const file = new File([blob], fileName,{ type: "image/png" });
+          const obj = {
+            image: image,
+            name: fileName,
+            file: file
+          }
+          setPhotoList([obj, ...photoList]);
+        });
+  }
 
   //클릭했을 때 반응
   useEffect(() => {
@@ -28,9 +46,8 @@ function CaptureButton({ setPhotoList, photoList }: any) {
   }, [isClick]);
 
   useEffect(() => {
-    console.log(image);
     if (image) {
-      setPhotoList([image, ...photoList]);
+      setImage(image);
     }
   }, [image]);
 

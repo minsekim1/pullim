@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     try {
       const now = new Date();
-      const savePath = `${__dirname}\\uploads\\${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}`;
+      const savePath = `uploads/${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}`;
       const isExists = fs.existsSync(savePath);
       if(isExists){
         cb(
@@ -34,12 +34,10 @@ const storage = multer.diskStorage({
     }
   },
   filename: function (req, file, cb) {
-    const now = new Date();
+    console.log(file);
     cb(
       null,
-      `${file.originalname}_${now.getFullYear()}_${
-        now.getMonth() + 1
-      }_${now.getDate()}_${now.getHours()}_${now.getMinutes()}_${now.getSeconds()}`
+      file.originalname
     );
   },
 });
@@ -49,9 +47,8 @@ const upload = multer({
   storage,
 });
 
-router.post("/", upload.array("photos"), (req, res) => {
-  console.log(req);
-  res.status(200).json({ sucess: false, photo: req.files });
+router.post("/", upload.array("photos"), (req:any, res) => {
+  res.status(200).json({ sucess: false, photo: req.files[0] });
 });
 
 export default router;

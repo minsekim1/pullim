@@ -36,12 +36,14 @@ function ButtonGroup(
       ref={Container}
       style={{
         position: "absolute",
-        bottom: "30%",
+        bottom: "15%",
         zIndex: 100,
         left: "1%",
         width: "150px",
+        height: "70%",
         minHeight: "180px",
-        // background: "white"
+        display: "flex",
+        alignItems: "center",
       }}
     >
       <div

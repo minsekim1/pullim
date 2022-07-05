@@ -6,11 +6,14 @@ export default function CaptureList(
 ) {
   const photoRef = useRef([]) as any;
   const buttonRef = useRef([]) as any;
+  const [data, setData] = useState<any>();
   const savePhoto = async () => {
     let formData = new FormData();
-    photoList.forEach((photo: string, i: number) => {
-      const data = new Blob([photo], { type: "image/png" });
-      formData.append("photos", data, "photo" + i);
+    photoList.forEach((photo: {file:File}, i: number) => {
+      const {file} = photo;
+      // const data = new Blob([photo], { type: "image/png" });
+      // formData.append("photos", data, "photo" + i);
+      formData.append("photos", file);
     });
     const response = await axios
       .post("/photo", formData)
@@ -18,6 +21,7 @@ export default function CaptureList(
     if (response.success) {
       alert("저장 완료!");
     }
+    setData(response.photo);
   };
 
   // const savePhotoToLocal = () =>{
@@ -85,7 +89,7 @@ export default function CaptureList(
       >
         <div style={{ minHeight: "500px", width: "100%" }}>
           {photoList.length !== 0 &&
-            photoList.map((photo: string, i: number) => (
+            photoList.map((photo: {image: string}, i: number) => (
               <div
                 key={i}
                 ref={(el) => (photoRef.current[i] = el)}
@@ -98,11 +102,11 @@ export default function CaptureList(
               >
                 <img
                   style={{ width: "100%", height: "100%" }}
-                  src={photo}
+                  src={photo.image}
                   alt="asa"
                   onClick={() =>{
                     setIsModal(true);
-                    setSrc(photoList[i]);
+                    setSrc(photoList[i].image);
                   }}
                 />
                 <button
@@ -138,6 +142,7 @@ export default function CaptureList(
         >
           사진저장
         </button>
+        {data && <div style={{width: "300px"}}><img src={`http://localhost:5001/images/202275/${data.filename}`} style={{width: "100%"}}/></div>}
         {/* <button
           onClick={savePhotoToLocal}
           style={{
