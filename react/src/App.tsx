@@ -19,7 +19,7 @@ ZoomMtg.i18n.reload("ko-KO");
 
 function App() {
   const [url, setUrl] = useState(
-    "https://zoom.us/j/95567460377?pwd=dlhrOHlCbzl5Nm92RHdsdjkzT2g1QT09"
+    "https://zoom.us/j/96808858476?pwd=eXplL0tlZUhXQk9MekVYVTJLNkNCUT09"
   );
   const [name, setName] = useState("");
   const [isEnter, setIsEnter] = useState(false);
@@ -137,7 +137,7 @@ function App() {
             id="트레이너"
             name="drone"
             value="1"
-            checked={isHost == "1"}
+            checked={isHost === "1"}
             onClick={() => setIsHost("1")}
           />
           <label htmlFor="트레이너" style={{ padding: "0 0 0 4px" }}>
@@ -149,7 +149,7 @@ function App() {
             id="참가자"
             name="drone"
             value="0"
-            checked={isHost == "0"}
+            checked={isHost === "0"}
             onClick={() => setIsHost("0")}
           />
           <label htmlFor="참가자" style={{ padding: "0 0 0 4px" }}>
