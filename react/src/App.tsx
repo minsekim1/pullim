@@ -6,6 +6,9 @@ import CaptureList from "./page/CaptureList";
 import ButtonGroup from "./components/ButtonGroup";
 import RecordAndPrescription from "./page/RecordAndPrescription";
 import CheckTool from "./page/CheckTool";
+import { BodyPixView } from "./page/Bodypix";
+import DiagnosticHistory from "./page/DiagnosticHistory";
+import { PhotoType, FileType} from "./types/PrescriptionType";
 
 ZoomMtg.setZoomJSLib("https://source.zoom.us/2.4.5/lib", "/av");
 
@@ -19,13 +22,26 @@ ZoomMtg.i18n.reload("ko-KO");
 
 function App() {
   const [url, setUrl] = useState(
+<<<<<<< HEAD
     "https://zoom.us/j/96808858476?pwd=eXplL0tlZUhXQk9MekVYVTJLNkNCUT09"
+=======
+    "https://zoom.us/j/91314635094?pwd=bm5icWNwSTBjdEh6d05ZaUFkbVBJUT09"
+>>>>>>> gunbro
   );
   const [name, setName] = useState("");
   const [isEnter, setIsEnter] = useState(false);
   const [isHost, setIsHost] = useState("0");
-  const [photoList, setPhotoList] = useState([]);
-  const [currentPage, setCurrentPage] = useState('');
+  
+  const [memo, setMemo] = useState<string>('');
+  const [photoList, setPhotoList] = useState(Array<PhotoType>);
+  const [uploadedPhotoList, setUploadedPhotoList] = useState(Array<PhotoType>);
+  const [videoList, setVideoList] = useState(Array<FileType>);
+
+  const [isModal, setIsModal] = useState(false);
+  const [src, setSrc] = useState("");
+
+  const [currentPage, setCurrentPage] = useState("");
+  const [isTensor, setIsTensor] = useState(false);
 
   useEffect(() => {
     if (document) {
@@ -123,6 +139,7 @@ function App() {
   }
   return (
     <div className="App">
+      
       <main>
         <h1>Zoom Meeting SDK Sample React</h1>
         <br />
@@ -176,19 +193,74 @@ function App() {
               display: "none",
               height: "100vh",
               backgroundColor: "rgba(255,255,255)",
-              color: "white",
               flexDirection: "column",
               alignItems: "center",
               borderRadius: "1% 0 0 1%",
-              overflow: "hidden"
+              overflow: "hidden",
               // wordWrap: "break-word",
             }}
           >
-            {currentPage==="CaptureList" && <CaptureList photoList={photoList} setPhotoList={setPhotoList} />}
-            {currentPage==="RecordAndPrescription" && <RecordAndPrescription/>}
-            {currentPage==="CheckTool" && <CheckTool/>}
+            {currentPage === "CaptureList" && (
+              <CaptureList
+                photoList={photoList}
+                setPhotoList={setPhotoList}
+                setIsModal={setIsModal}
+                setSrc={setSrc}
+              />
+            )}
+            {currentPage === "RecordAndPrescription" && (
+              <RecordAndPrescription 
+              photoList={photoList} 
+              uploadedPhotoList={uploadedPhotoList}
+              setUploadedPhotoList={setUploadedPhotoList}
+              videoList={videoList}
+              setVideoList={setVideoList}
+              memo={memo}
+              setMemo={setMemo}/>
+            )}
+            {currentPage === "CheckTool" && <CheckTool />}
+            {currentPage === "DiagnosticHistory" && <DiagnosticHistory/>}
           </div>
-          <ButtonGroup setPhotoList={setPhotoList} photoList={photoList} setCurrentPage={setCurrentPage}/>
+          <ButtonGroup
+            setPhotoList={setPhotoList}
+            photoList={photoList}
+            setCurrentPage={setCurrentPage}
+          />
+          {isTensor && <div
+      style={{
+        position:'absolute',
+        left:0,
+        zIndex:99,
+        top:0,
+        width: 300,
+        height: "80vh",
+        backgroundColor: "rgba(0,0,0,0.4)",
+        color: "white",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        overflow: "scroll",
+      }}
+    >
+      <div style={{ minHeight: "1000px" }}><BodyPixView/></div></div>}
+        <button style={{position: "absolute", top: 0, left: "50%", zIndex: 99}} onClick={() => setIsTensor((prev)=>!prev)}>그리드배경버튼</button>
+    
+        {isModal && (
+          <div
+            style={{
+              zIndex: 1,
+              position: "absolute",
+              width: "1100px",
+              top: "10%",
+              left: "10%",
+              border:"2.5px solid orange"
+            }}
+          >
+            <img style={{ width: "100%" }} onClick={() =>{
+              setIsModal(false);
+            }} src={src} alt="aa" />
+          </div>
+          )}
         </>
       )}
     </div>

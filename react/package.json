@@ -10,6 +10,7 @@
     "@testing-library/user-event": "^12.1.10",
     "@zoom/appssdk": "^0.16.0",
     "@zoomus/websdk": "^2.4.5",
+    "body-pix-react-render": "^1.0.10",
     "axios": "^0.27.2",
     "react": "^17.0.1",
     "react-dev-utils": "^11.0.4",
