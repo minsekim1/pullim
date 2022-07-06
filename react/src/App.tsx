@@ -8,6 +8,7 @@ import RecordAndPrescription from "./page/RecordAndPrescription";
 import CheckTool from "./page/CheckTool";
 import { BodyPixView } from "./page/Bodypix";
 import DiagnosticHistory from "./page/DiagnosticHistory";
+import { PhotoType, FileType} from "./types/PrescriptionType";
 
 ZoomMtg.setZoomJSLib("https://source.zoom.us/2.4.5/lib", "/av");
 
@@ -26,10 +27,16 @@ function App() {
   const [name, setName] = useState("");
   const [isEnter, setIsEnter] = useState(false);
   const [isHost, setIsHost] = useState("0");
-  const [photoList, setPhotoList] = useState([]);
-  const [currentPage, setCurrentPage] = useState("");
+  
+  const [memo, setMemo] = useState<string>('');
+  const [photoList, setPhotoList] = useState(Array<PhotoType>);
+  const [uploadedPhotoList, setUploadedPhotoList] = useState(Array<PhotoType>);
+  const [videoList, setVideoList] = useState(Array<FileType>);
+
   const [isModal, setIsModal] = useState(false);
   const [src, setSrc] = useState("");
+
+  const [currentPage, setCurrentPage] = useState("");
   const [isTensor, setIsTensor] = useState(false);
 
   useEffect(() => {
@@ -143,7 +150,7 @@ function App() {
             id="트레이너"
             name="drone"
             value="1"
-            checked={isHost == "1"}
+            checked={isHost === "1"}
             onClick={() => setIsHost("1")}
           />
           <label htmlFor="트레이너" style={{ padding: "0 0 0 4px" }}>
@@ -155,7 +162,7 @@ function App() {
             id="참가자"
             name="drone"
             value="0"
-            checked={isHost == "0"}
+            checked={isHost === "0"}
             onClick={() => setIsHost("0")}
           />
           <label htmlFor="참가자" style={{ padding: "0 0 0 4px" }}>
@@ -198,7 +205,14 @@ function App() {
               />
             )}
             {currentPage === "RecordAndPrescription" && (
-              <RecordAndPrescription photoList={photoList}/>
+              <RecordAndPrescription 
+              photoList={photoList} 
+              uploadedPhotoList={uploadedPhotoList}
+              setUploadedPhotoList={setUploadedPhotoList}
+              videoList={videoList}
+              setVideoList={setVideoList}
+              memo={memo}
+              setMemo={setMemo}/>
             )}
             {currentPage === "CheckTool" && <CheckTool />}
             {currentPage === "DiagnosticHistory" && <DiagnosticHistory/>}
@@ -224,24 +238,24 @@ function App() {
         overflow: "scroll",
       }}
     >
-      <div style={{ minHeight: "1000px" }}> <BodyPixView/></div></div>}
-           <button style={{position: "absolute", top: 0, left: "50%", zIndex: 99}} onClick={() => setIsTensor((prev)=>!prev)}>그리드배경버튼</button>
-      
-          {isModal && (
-            <div
-              style={{
-                zIndex: 1,
-                position: "absolute",
-                width: "1100px",
-                top: "10%",
-                left: "10%",
-                border:"2.5px solid orange"
-              }}
-            >
-              <img style={{ width: "100%" }} onClick={() =>{
-                setIsModal(false);
-              }} src={src} alt="aa" />
-            </div>
+      <div style={{ minHeight: "1000px" }}><BodyPixView/></div></div>}
+        <button style={{position: "absolute", top: 0, left: "50%", zIndex: 99}} onClick={() => setIsTensor((prev)=>!prev)}>그리드배경버튼</button>
+    
+        {isModal && (
+          <div
+            style={{
+              zIndex: 1,
+              position: "absolute",
+              width: "1100px",
+              top: "10%",
+              left: "10%",
+              border:"2.5px solid orange"
+            }}
+          >
+            <img style={{ width: "100%" }} onClick={() =>{
+              setIsModal(false);
+            }} src={src} alt="aa" />
+          </div>
           )}
         </>
       )}

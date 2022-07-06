@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useCallback } from "react";
 import { useScreenshot } from "use-screenshot-hook";
 import { UseScreenshotProps } from "use-screenshot-hook/dist/types";
-import { photoType } from "../types/photoType";
+import { PhotoType } from "../types/PrescriptionType";
 
 
 function CaptureButton({ setPhotoList, photoList }: any) {
@@ -22,7 +23,7 @@ function CaptureButton({ setPhotoList, photoList }: any) {
   };
   
   //캡처 이미지 저장하는 함수
-  const setImage = async(image: string) =>{
+  const setImage = useCallback(async(image: string) =>{
     const now = new Date();
     const fileName = `photo_${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}${now.getHours()}${now.getMinutes()}${now.getSeconds()}.png`;
 
@@ -30,14 +31,14 @@ function CaptureButton({ setPhotoList, photoList }: any) {
       .then(res => res.blob())
       .then(blob => {
         const file = new File([blob], fileName,{ type: "image/png" });
-        const obj:photoType = {
+        const obj:PhotoType = {
           image: image,
           name: fileName,
           file: file
         }
         setPhotoList([obj, ...photoList]);
       });
-  }
+  },[photoList, setPhotoList])
 
   //클릭했을 때 반응
   useEffect(() => {
@@ -45,13 +46,13 @@ function CaptureButton({ setPhotoList, photoList }: any) {
       takeScreenshot();
       setIsClick(false);
     }
-  }, [isClick]);
+  }, [isClick, takeScreenshot]);
 
   useEffect(() => {
-    if (image) {
+    if (isClick && image) {
       setImage(image);
     }
-  }, [image]);
+  }, [isClick, image, setImage]);
 
   return (
     <>
