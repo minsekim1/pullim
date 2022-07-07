@@ -22,11 +22,7 @@ ZoomMtg.i18n.reload("ko-KO");
 
 function App() {
   const [url, setUrl] = useState(
-<<<<<<< HEAD
-    "https://zoom.us/j/96808858476?pwd=eXplL0tlZUhXQk9MekVYVTJLNkNCUT09"
-=======
-    "https://zoom.us/j/91314635094?pwd=bm5icWNwSTBjdEh6d05ZaUFkbVBJUT09"
->>>>>>> gunbro
+    "https://zoom.us/j/93578157858?pwd=eGE0NUhLV3RHbHhCVjNwaDRndEg3Zz09"
   );
   const [name, setName] = useState("");
   const [isEnter, setIsEnter] = useState(false);
