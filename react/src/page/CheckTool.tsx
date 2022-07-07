@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { SourcePlayback } from '../core/helpers/sourceHelper';
 import useCapture from '../hook/useCapture';
 import { PhotoType } from '../types/PrescriptionType';
 
@@ -8,7 +9,25 @@ interface CheckToolPropsType {
 }
 
 function CheckTool({checkedPhotoList, setCheckedPhotoList}:CheckToolPropsType) {
-  const clickCapture = useCapture(setCheckedPhotoList, checkedPhotoList, {eltype: "id", elname: "grid-bg-photo"});
+  const [sourcePlayback, setSourcePlayback] = useState<SourcePlayback>();
+  const createImage = (iamge: string) =>{
+    const imageEl = document.createElement('img');
+    imageEl.src = iamge;
+    imageEl.style.width = "500px";
+    console.log(imageEl);
+    setSourcePlayback({
+      htmlElement: imageEl,
+      width: imageEl.naturalWidth,
+      height: imageEl.naturalHeight
+    });
+    return 
+  }
+  
+  const clickCapture = useCapture(setCheckedPhotoList, checkedPhotoList, {eltype: "id", elname: "grid-bg-photo"}, createImage);
+
+
+  const clickCheck =  () => {
+  }
   return (
     <>
       <h4 style={{color: "black"}}>검사툴</h4>
