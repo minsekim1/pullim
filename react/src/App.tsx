@@ -29,9 +29,10 @@ function App() {
   const [isHost, setIsHost] = useState("0");
   
   const [memo, setMemo] = useState<string>('');
-  const [photoList, setPhotoList] = useState(Array<PhotoType>);
-  const [uploadedPhotoList, setUploadedPhotoList] = useState(Array<PhotoType>);
-  const [videoList, setVideoList] = useState(Array<FileType>);
+  const [photoList, setPhotoList] = useState<PhotoType[]>([]);
+  const [checkedPhotoList, setCheckedPhotoList] = useState<PhotoType[]>([]);
+  const [uploadedPhotoList, setUploadedPhotoList] = useState<PhotoType[]>([]);
+  const [videoList, setVideoList] = useState<PhotoType[]>([]);
 
   const [isModal, setIsModal] = useState(false);
   const [src, setSrc] = useState("");
@@ -214,7 +215,7 @@ function App() {
               memo={memo}
               setMemo={setMemo}/>
             )}
-            {currentPage === "CheckTool" && <CheckTool />}
+            {currentPage === "CheckTool" && <CheckTool checkedPhotoList={checkedPhotoList} setCheckedPhotoList={setCheckedPhotoList} />}
             {currentPage === "DiagnosticHistory" && <DiagnosticHistory/>}
           </div>
           <ButtonGroup
