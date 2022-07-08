@@ -22,4 +22,17 @@ const zoomEarlyMsg = {
     }   
 }
 
-module.exports = {zoomStartMsg, zoomEarlyMsg}
+const zoomLink = {
+    templateCode: '14',
+    to: 'num',
+    data: {
+        name:'', //customer_name
+        restime: null, //new Data(예약시간)
+        mmdd: null, //restime.toLocaleDateString()
+        hhmm: null, //restime.toLocaleTimeString().slice(0,-3)
+        trainer:'', //trainer_name
+        URL:''
+    }   
+}
+
+module.exports = {zoomStartMsg, zoomEarlyMsg, zoomLink}

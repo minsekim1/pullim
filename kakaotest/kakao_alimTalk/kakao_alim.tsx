@@ -1,5 +1,7 @@
-const crypto = require('crypto');
-const axios = require('axios')
+// const crypto = require('crypto');
+import crypto from 'crypto';
+import axios from 'axios';
+// const axios = require('axios');
 require('dotenv').config()
 
 function makeSignature() {
@@ -8,9 +10,9 @@ function makeSignature() {
   var method = 'POST'; // method
   var timestamp = Date.now().toString(); // current timestamp (epoch)
   var accessKey = process.env.NAVER_ACCESSKEY; // access key ids
-  var secretKey = process.env.NAVER_SECRETKEY; // secret key
+  var secretKey : any = process.env.NAVER_SECRETKEY; // secret key
   const url2 = `/alimtalk/v2/services/${process.env.NAVER_CHANNEL_ID}/messages`;
-  let message = [];
+  let message : any[]= [];
   let hmac = crypto.createHmac('sha256', secretKey);
   
   message.push(method);
@@ -50,7 +52,6 @@ const getRequestParams = ({ type, to, data }) => {
       ]
     }
   }
-  
   if (type === '13') {
     return {
       templateCode: type,
@@ -77,6 +78,32 @@ const getRequestParams = ({ type, to, data }) => {
       ]
     }
   }
+  if (type === '14') {
+    return {
+      templateCode: type,
+      plusFriendId: process.env.MYCH,
+      messages: [
+        {
+          to,
+          content: `비대면 진료가 ${data.time} 시작됩니다.
+
+신청자: ${data.name}
+진행일자: ${data.mmdd}, ${data.hhmm}
+담당자: ${data.trainer}
+
+          ※주의 사항`,
+          buttons: [
+            {
+              type: 'WL',
+              name: '안내 사항',
+              linkAndroid: `https://${data.URL}`,
+              linkIos: `https://${data.URL}`,
+            }
+          ]
+        }
+      ]
+    }
+  }
 }
 
 const sendKakaoMessage = async ({ templateCode, to, data }) => {
@@ -86,7 +113,7 @@ const sendKakaoMessage = async ({ templateCode, to, data }) => {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'x-ncp-apigw-timestamp': Date.now().toString(),
-        'x-ncp-iam-access-key': process.env.NAVER_ACCESSKEY,
+        'x-ncp-iam-access-key' : process.env.NAVER_ACCESSKEY as string,
         'x-ncp-apigw-signature-v2': makeSignature(),
       },
     });

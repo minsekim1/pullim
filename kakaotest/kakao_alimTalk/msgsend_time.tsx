@@ -1,7 +1,9 @@
 const cron = require('node-cron');
-const customerReservationList = require('./customerReservationList');
-const {zoomStartMsg, zoomEarlyMsg} = require('./template_list');
+import './customerReservationList';
+const {zoomStartMsg, zoomEarlyMsg, zoomLink} = require('./template_list.tsx');
 const sendKakaoMessage = require('./kakao_alim');
+const { makeLink } = require('../../create_zoomLink/create_meeting_py');
+const client_api_list = require('../../create_zoomLink/client_api_list.json')
 
 cron.schedule('0-59 * * * *', async() => {
     console.log('실행중')
@@ -37,21 +39,32 @@ cron.schedule('0-59 * * * *', async() => {
                 }
                 console.log(zoomEarlyMsg)
                 // console.log("메세지 전송시간" + Date())
+
+                ////////////트레이너에게도 전송
                 sendKakaoMessage(zoomEarlyMsg)
             }
 
             if(now === res_moment){ //zoomEarlyMsg : 시작알림
-                zoomStartMsg.to = customerReservationList[num].phone
-                zoomStartMsg.data = {
+                let [link_URL, link_PW]:any = null
+                for (let api in client_api_list ){
+                    if (client_api_list[api].phone === customerReservationList[num].phone){
+                        [ link_URL, link_PW ] = makeLink(client_api_list[api].API_KEY, client_api_list[api].API_SEC)
+                    }
+                }
+                zoomLink.to = customerReservationList[num].phone
+                zoomLink.data = {
                     name:customerReservationList[num].name,
                     time: '지금',
                     mmdd: customerReservationList[num].zoomRsvTime.toLocaleDateString(),
                     hhmm: customerReservationList[num].zoomRsvTime.toLocaleTimeString().slice(0,-3),
-                    trainer:customerReservationList[num].trainer
+                    trainer:customerReservationList[num].trainer,
+                    URL: link_URL
                 }
-                console.log(zoomStartMsg)
+                console.log(zoomLink)
                 // console.log("메세지 전송시간" + Date())
-                sendKakaoMessage(zoomStartMsg)
+                
+                ////////////트레이너에게도 전송
+                sendKakaoMessage(zoomLink)
             }
     }
     } catch (err) {
