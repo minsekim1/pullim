@@ -22,16 +22,21 @@ ZoomMtg.i18n.reload("ko-KO");
 
 function App() {
   const [url, setUrl] = useState(
+<<<<<<< HEAD
     "https://zoom.us/j/93578157858?pwd=eGE0NUhLV3RHbHhCVjNwaDRndEg3Zz09"
+=======
+    "https://zoom.us/j/91314635094?pwd=bm5icWNwSTBjdEh6d05ZaUFkbVBJUT09"
+>>>>>>> gunbro
   );
   const [name, setName] = useState("");
   const [isEnter, setIsEnter] = useState(false);
   const [isHost, setIsHost] = useState("0");
   
   const [memo, setMemo] = useState<string>('');
-  const [photoList, setPhotoList] = useState(Array<PhotoType>);
-  const [uploadedPhotoList, setUploadedPhotoList] = useState(Array<PhotoType>);
-  const [videoList, setVideoList] = useState(Array<FileType>);
+  const [photoList, setPhotoList] = useState<PhotoType[]>([]);
+  const [checkedPhotoList, setCheckedPhotoList] = useState<PhotoType[]>([]);
+  const [uploadedPhotoList, setUploadedPhotoList] = useState<PhotoType[]>([]);
+  const [videoList, setVideoList] = useState<PhotoType[]>([]);
 
   const [isModal, setIsModal] = useState(false);
   const [src, setSrc] = useState("");
@@ -214,7 +219,7 @@ function App() {
               memo={memo}
               setMemo={setMemo}/>
             )}
-            {currentPage === "CheckTool" && <CheckTool />}
+            {currentPage === "CheckTool" && <CheckTool checkedPhotoList={checkedPhotoList} setCheckedPhotoList={setCheckedPhotoList} />}
             {currentPage === "DiagnosticHistory" && <DiagnosticHistory/>}
           </div>
           <ButtonGroup
