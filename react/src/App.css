@@ -4,6 +4,10 @@ main {
   text-align: center;
 }
 
+iframe{
+  z-index: 10 !important;
+  height: 30vh !important;
+}
 main button {
   margin-top: 20px;
   background-color: #2D8CFF;
