@@ -8,7 +8,7 @@ import RecordAndPrescription from "./page/RecordAndPrescription";
 import CheckTool from "./page/CheckTool";
 import { BodyPixView } from "./page/Bodypix";
 import DiagnosticHistory from "./page/DiagnosticHistory";
-import { PhotoType, FileType} from "./types/PrescriptionType";
+import { PhotoType, FileType } from "./types/PrescriptionType";
 
 ZoomMtg.setZoomJSLib("https://source.zoom.us/2.4.5/lib", "/av");
 
@@ -27,8 +27,8 @@ function App() {
   const [name, setName] = useState("");
   const [isEnter, setIsEnter] = useState(false);
   const [isHost, setIsHost] = useState("0");
-  
-  const [memo, setMemo] = useState<string>('');
+
+  const [memo, setMemo] = useState<string>("");
   const [photoList, setPhotoList] = useState<PhotoType[]>([]);
   const [checkedPhotoList, setCheckedPhotoList] = useState<PhotoType[]>([]);
   const [uploadedPhotoList, setUploadedPhotoList] = useState<PhotoType[]>([]);
@@ -203,58 +203,78 @@ function App() {
               />
             )}
             {currentPage === "RecordAndPrescription" && (
-              <RecordAndPrescription 
-              photoList={photoList} 
-              uploadedPhotoList={uploadedPhotoList}
-              setUploadedPhotoList={setUploadedPhotoList}
-              videoList={videoList}
-              setVideoList={setVideoList}
-              memo={memo}
-              setMemo={setMemo}/>
+              <RecordAndPrescription
+                photoList={photoList}
+                uploadedPhotoList={uploadedPhotoList}
+                setUploadedPhotoList={setUploadedPhotoList}
+                videoList={videoList}
+                setVideoList={setVideoList}
+                memo={memo}
+                setMemo={setMemo}
+              />
             )}
-            {currentPage === "CheckTool" && <CheckTool checkedPhotoList={checkedPhotoList} setCheckedPhotoList={setCheckedPhotoList} />}
-            {currentPage === "DiagnosticHistory" && <DiagnosticHistory/>}
+            {currentPage === "CheckTool" && (
+              <CheckTool
+                checkedPhotoList={checkedPhotoList}
+                setCheckedPhotoList={setCheckedPhotoList}
+              />
+            )}
+            {currentPage === "DiagnosticHistory" && <DiagnosticHistory />}
           </div>
           <ButtonGroup
             setPhotoList={setPhotoList}
             photoList={photoList}
             setCurrentPage={setCurrentPage}
           />
-          {isTensor && <div
-      style={{
-        position:'absolute',
-        left:0,
-        zIndex:99,
-        top:0,
-        width: 300,
-        height: "80vh",
-        backgroundColor: "rgba(0,0,0,0.4)",
-        color: "white",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        overflow: "scroll",
-      }}
-    >
-      <div style={{ minHeight: "1000px" }}><BodyPixView/></div></div>}
-        <button style={{position: "absolute", top: 0, left: "50%", zIndex: 99}} onClick={() => setIsTensor((prev)=>!prev)}>그리드배경버튼</button>
-    
-        {isModal && (
-          <div
-            style={{
-              zIndex: 1,
-              position: "absolute",
-              width: "1100px",
-              top: "10%",
-              left: "10%",
-              border:"2.5px solid orange"
-            }}
+          {/* {isTensor && (
+            <div
+              style={{
+                position: "absolute",
+                left: 0,
+                zIndex: 99,
+                top: 0,
+                width: 300,
+                height: "80vh",
+                backgroundColor: "rgba(0,0,0,0.4)",
+                color: "white",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                overflow: "scroll",
+              }}
+            >
+              <div style={{ minHeight: "1000px" }}>
+                <BodyPixView />
+              </div>
+            </div>
+          )}
+          <button
+            style={{ position: "absolute", top: 0, left: "50%", zIndex: 99 }}
+            onClick={() => setIsTensor((prev) => !prev)}
           >
-            <img style={{ width: "100%" }} onClick={() =>{
-              setIsModal(false);
-            }} src={src} alt="aa" />
-          </div>
+            그리드배경버튼
+          </button> */}
 
+          {isModal && (
+            <div
+              style={{
+                zIndex: 1,
+                position: "absolute",
+                width: "1100px",
+                top: "10%",
+                left: "10%",
+                border: "2.5px solid orange",
+              }}
+            >
+              <img
+                style={{ width: "100%" }}
+                onClick={() => {
+                  setIsModal(false);
+                }}
+                src={src}
+                alt="aa"
+              />
+            </div>
           )}
         </>
       )}

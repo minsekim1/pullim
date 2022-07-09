@@ -7,7 +7,8 @@ import { PhotoType } from "../types/PrescriptionType";
 
 
 function CaptureButton({ setPhotoList, photoList }: any) {
-  const clickCapture = useCapture(setPhotoList, photoList, {eltype: "className", elname: 'single-main-container__canvas'});
+  const {clickCapture} = useCapture(setPhotoList, photoList, {eltype: "className", elname: 'single-main-container__canvas'});
+
 
   return (
     <>
