@@ -22,11 +22,7 @@ ZoomMtg.i18n.reload("ko-KO");
 
 function App() {
   const [url, setUrl] = useState(
-<<<<<<< HEAD
-    "https://zoom.us/j/93578157858?pwd=eGE0NUhLV3RHbHhCVjNwaDRndEg3Zz09"
-=======
     "https://zoom.us/j/91314635094?pwd=bm5icWNwSTBjdEh6d05ZaUFkbVBJUT09"
->>>>>>> gunbro
   );
   const [name, setName] = useState("");
   const [isEnter, setIsEnter] = useState(false);
@@ -41,8 +37,11 @@ function App() {
   const [isModal, setIsModal] = useState(false);
   const [src, setSrc] = useState("");
 
+
   const [currentPage, setCurrentPage] = useState("");
   const [isTensor, setIsTensor] = useState(false);
+
+  const [isBodypix, setIsBodypix] = useState(false);
 
   useEffect(() => {
     if (document) {
@@ -52,10 +51,7 @@ function App() {
   }, []);
 
   const sdkKey = "xPN1ctkMLTAqaWGsE7FDSonJSEOO8B0XtQf8";
-  const meetingNumber = url.slice(
-    url.indexOf("/j/") + 3,
-    url.indexOf("pwd=") - 1
-  );
+  const meetingNumber = url.slice(url.indexOf("/j/") + 3, url.indexOf("pwd=") - 1);
   const leaveUrl = "http://localhost:3000";
   const userEmail = "";
   const passWord = url.slice(url.indexOf("pwd=") + 4, url.length);
@@ -71,9 +67,7 @@ function App() {
       success: () => console.info("generateSDKSignature success"),
       error: (e: any) => console.info("generateSDKSignature fail", e),
     });
-  function getSignature(
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) {
+  function getSignature(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     event.preventDefault();
 
     const root = document.getElementById("zmmtg-root");
@@ -105,8 +99,7 @@ function App() {
       isSupportNonverbal: true,
       isShowJoiningErrorDialog: true,
 
-      inviteUrlFormat:
-        "https://localhost:3000/?url=https://us04web.zoom.us/j/{0}?pwd={1}",
+      inviteUrlFormat: "https://localhost:3000/?url=https://us04web.zoom.us/j/{0}?pwd={1}",
 
       meetingInfo: ["participant"],
       disableVoIP: false,
@@ -140,7 +133,6 @@ function App() {
   }
   return (
     <div className="App">
-      
       <main>
         <h1>Zoom Meeting SDK Sample React</h1>
         <br />
@@ -202,6 +194,7 @@ function App() {
             }}
           >
             {currentPage === "CaptureList" && (
+
               <CaptureList
                 photoList={photoList}
                 setPhotoList={setPhotoList}
@@ -261,6 +254,7 @@ function App() {
               setIsModal(false);
             }} src={src} alt="aa" />
           </div>
+
           )}
         </>
       )}
