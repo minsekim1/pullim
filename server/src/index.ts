@@ -6,9 +6,9 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-app.get("/", function (req, res) {
-  res.send("Node server is running ...");
-});
+// app.get("/", function (req, res) {
+//   res.send("Node server is running ...");
+// });
 
 app.use('/images', express.static('uploads'));
 
