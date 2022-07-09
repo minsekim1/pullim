@@ -7,6 +7,8 @@ import ButtonGroup from "./components/ButtonGroup";
 import RecordAndPrescription from "./page/RecordAndPrescription";
 import CheckTool from "./page/CheckTool";
 import { BodyPixView } from "./page/Bodypix";
+import DiagnosticHistory from "./page/DiagnosticHistory";
+import { PhotoType, FileType} from "./types/PrescriptionType";
 
 ZoomMtg.setZoomJSLib("https://source.zoom.us/2.4.5/lib", "/av");
 
@@ -23,12 +25,22 @@ function App() {
   const [name, setName] = useState("");
   const [isEnter, setIsEnter] = useState(false);
   const [isHost, setIsHost] = useState("0");
-  const [photoList, setPhotoList] = useState([]);
-  const [currentPage, setCurrentPage] = useState("");
+  
+  const [memo, setMemo] = useState<string>('');
+  const [photoList, setPhotoList] = useState<PhotoType[]>([]);
+  const [checkedPhotoList, setCheckedPhotoList] = useState<PhotoType[]>([]);
+  const [uploadedPhotoList, setUploadedPhotoList] = useState<PhotoType[]>([]);
+  const [videoList, setVideoList] = useState<PhotoType[]>([]);
+
   const [isModal, setIsModal] = useState(false);
   const [src, setSrc] = useState("");
 
+
+  const [currentPage, setCurrentPage] = useState("");
+  const [isTensor, setIsTensor] = useState(false);
+
   const [isBodypix, setIsBodypix] = useState(false);
+
   useEffect(() => {
     if (document) {
       const url = document.location.href.split("?url=")[1];
@@ -133,7 +145,7 @@ function App() {
             id="트레이너"
             name="drone"
             value="1"
-            checked={isHost == "1"}
+            checked={isHost === "1"}
             onClick={() => setIsHost("1")}
           />
           <label htmlFor="트레이너" style={{ padding: "0 0 0 4px" }}>
@@ -145,7 +157,7 @@ function App() {
             id="참가자"
             name="drone"
             value="0"
-            checked={isHost == "0"}
+            checked={isHost === "0"}
             onClick={() => setIsHost("0")}
           />
           <label htmlFor="참가자" style={{ padding: "0 0 0 4px" }}>
@@ -172,7 +184,6 @@ function App() {
               display: "none",
               height: "100vh",
               backgroundColor: "rgba(255,255,255)",
-              color: "white",
               flexDirection: "column",
               alignItems: "center",
               borderRadius: "1% 0 0 1%",
@@ -181,58 +192,67 @@ function App() {
             }}
           >
             {currentPage === "CaptureList" && (
-              <CaptureList photoList={photoList} setPhotoList={setPhotoList} setIsModal={setIsModal} setSrc={setSrc} />
-            )}
-            {currentPage === "RecordAndPrescription" && <RecordAndPrescription />}
-            {currentPage === "CheckTool" && <CheckTool />}
-          </div>
-          <ButtonGroup setPhotoList={setPhotoList} photoList={photoList} setCurrentPage={setCurrentPage} />
 
-          <div style={{ position: "absolute", zIndex: 99999,top:400, left:0 }}>
-            <button onClick={() => setIsBodypix((prev) => !prev)} style={{color:'white'}} >그리드전환</button>
-          </div>
-          {isBodypix && (
-            <div
-              style={{
-                position: "absolute",
-                left: 0,
-                zIndex: 99999999999,
-                top: 0,
-                width: 300,
-                height: "60vh",
-                backgroundColor: "rgba(0,0,0,0.4)",
-                color: "white",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                overflow: "scroll",
-              }}
-            >
-              <div style={{ minHeight: "1000px" }}>
-                <BodyPixView />
-              </div>
-            </div>
-          )}
-
-          {isModal && (
-            <div
-              style={{
-                zIndex: 1,
-                position: "absolute",
-                width: "1100px",
-                top: "10%",
-                left: "10%",
-              }}
-            >
-              <img
-                style={{ width: "100%" }}
-                onClick={() => {
-                  setIsModal(false);
-                }}
-                src={src}
-                alt="aa"
+              <CaptureList
+                photoList={photoList}
+                setPhotoList={setPhotoList}
+                setIsModal={setIsModal}
+                setSrc={setSrc}
               />
-            </div>
+            )}
+            {currentPage === "RecordAndPrescription" && (
+              <RecordAndPrescription 
+              photoList={photoList} 
+              uploadedPhotoList={uploadedPhotoList}
+              setUploadedPhotoList={setUploadedPhotoList}
+              videoList={videoList}
+              setVideoList={setVideoList}
+              memo={memo}
+              setMemo={setMemo}/>
+            )}
+            {currentPage === "CheckTool" && <CheckTool checkedPhotoList={checkedPhotoList} setCheckedPhotoList={setCheckedPhotoList} />}
+            {currentPage === "DiagnosticHistory" && <DiagnosticHistory/>}
+          </div>
+          <ButtonGroup
+            setPhotoList={setPhotoList}
+            photoList={photoList}
+            setCurrentPage={setCurrentPage}
+          />
+          {isTensor && <div
+      style={{
+        position:'absolute',
+        left:0,
+        zIndex:99,
+        top:0,
+        width: 300,
+        height: "80vh",
+        backgroundColor: "rgba(0,0,0,0.4)",
+        color: "white",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        overflow: "scroll",
+      }}
+    >
+      <div style={{ minHeight: "1000px" }}><BodyPixView/></div></div>}
+        <button style={{position: "absolute", top: 0, left: "50%", zIndex: 99}} onClick={() => setIsTensor((prev)=>!prev)}>그리드배경버튼</button>
+    
+        {isModal && (
+          <div
+            style={{
+              zIndex: 1,
+              position: "absolute",
+              width: "1100px",
+              top: "10%",
+              left: "10%",
+              border:"2.5px solid orange"
+            }}
+          >
+            <img style={{ width: "100%" }} onClick={() =>{
+              setIsModal(false);
+            }} src={src} alt="aa" />
+          </div>
+
           )}
         </>
       )}

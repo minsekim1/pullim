@@ -3,10 +3,13 @@ import CaptureButton from "./CaptureButton";
 import CheckToolButton from "./CheckToolButton";
 import CaptureListButton from "./CaptureListButton";
 import RecordAndPrescriptionButton from "./RecordAndPrescriptionButton";
+import usePage from "../hook/usePage";
+import DiagnosticHistoryButton from "./DiagnosticHistoryButton";
 
 function ButtonGroup(
   { setPhotoList, photoList, setCurrentPage }: any = { Function, Array }
 ) {
+  const onClickHandler = usePage(setCurrentPage);
   const Container = useRef<any>();
   const buttonGroupRef = useRef<any>();
 
@@ -36,12 +39,14 @@ function ButtonGroup(
       ref={Container}
       style={{
         position: "absolute",
-        bottom: "30%",
+        bottom: "15%",
         zIndex: 100,
         left: "1%",
         width: "150px",
+        height: "70%",
         minHeight: "180px",
-        // background: "white"
+        display: "flex",
+        alignItems: "center",
       }}
     >
       <div
@@ -52,10 +57,11 @@ function ButtonGroup(
           width: "300px"
         }}
       >
-        <CaptureListButton setCurrentPage={setCurrentPage} />
+        <CaptureListButton onClickHandler={onClickHandler} />
         <CaptureButton setPhotoList={setPhotoList} photoList={photoList} />
-        <CheckToolButton setCurrentPage={setCurrentPage} />
-        <RecordAndPrescriptionButton setCurrentPage={setCurrentPage} />
+        <CheckToolButton onClickHandler={onClickHandler} />
+        <RecordAndPrescriptionButton onClickHandler={onClickHandler} />
+        <DiagnosticHistoryButton onClickHandler={onClickHandler}/>
       </div>
     </div>
   );

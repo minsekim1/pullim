@@ -1,28 +1,10 @@
-import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
 export default function CaptureList(
   { photoList, setPhotoList, setIsModal, setSrc }: any = { Array, Function }
 ) {
   const photoRef = useRef([]) as any;
   const buttonRef = useRef([]) as any;
-  const savePhoto = async () => {
-    let formData = new FormData();
-    photoList.forEach((photo: string, i: number) => {
-      const data = new Blob([photo], { type: "image/png" });
-      formData.append("photos", data, "photo" + i);
-    });
-    const response = await axios
-      .post("/photo", formData)
-      .then((res) => res.data);
-    if (response.success) {
-      alert("저장 완료!");
-    }
-  };
-
-  // const savePhotoToLocal = () =>{
-    
-  // }
 
   const onDeleteHandler = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -74,7 +56,8 @@ export default function CaptureList(
       <h4 style={{color: "black"}}>저장된 화면캡처 화면</h4>
       <div
         style={{
-          width: "100%",
+          width: "90%",
+          padding: "10px",
           height: "90vh",
           color: "white",
           display: "flex",
@@ -85,7 +68,7 @@ export default function CaptureList(
       >
         <div style={{ minHeight: "500px", width: "100%" }}>
           {photoList.length !== 0 &&
-            photoList.map((photo: string, i: number) => (
+            photoList.map((photo: {image: string}, i: number) => (
               <div
                 key={i}
                 ref={(el) => (photoRef.current[i] = el)}
@@ -98,11 +81,11 @@ export default function CaptureList(
               >
                 <img
                   style={{ width: "100%", height: "100%" }}
-                  src={photo}
+                  src={photo.image}
                   alt="asa"
                   onClick={() =>{
                     setIsModal(true);
-                    setSrc(photoList[i]);
+                    setSrc(photoList[i].image);
                   }}
                 />
                 <button
@@ -125,19 +108,7 @@ export default function CaptureList(
         </div>
       </div>
       <section style={{display: "flex", width: "100%"}}>
-        <button
-          style={{
-            width: "100%",
-            height: "10vh",
-            background: "red",
-            borderRadius: "5px",
-            color: "white",
-            fontSize: "11px",
-          }}
-          onClick={savePhoto}
-        >
-          사진저장
-        </button>
+        {/* {data && <div style={{width: "300px"}}><img src={`http://localhost:5001/images/202275/${data.filename}`} style={{width: "100%"}}/></div>} */}
         {/* <button
           onClick={savePhotoToLocal}
           style={{
