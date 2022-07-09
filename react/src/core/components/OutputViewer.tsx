@@ -39,14 +39,14 @@ function OutputViewer(props: OutputViewerProps) {
 
   return (
     <div>
-      {/* {props.backgroundConfig.type === 'image' && (
+      {props.backgroundConfig.type === 'image' && (
         <img
           ref={backgroundImageRef}
           src={props.backgroundConfig.url}
           alt=""
           hidden={props.segmentationConfig.pipeline === 'webgl2'}
         />
-      )} */}
+      )}
       <canvas
         // The key attribute is required to create a new canvas when switching
         // context mode
