@@ -27,7 +27,7 @@ function useCapture(setPhotoList: Function, photoList: PhotoType[], elObject: El
     }
     const canvasRef = tempRef
     vedioRef.current = canvasRef as any;
-
+    console.log(vedioRef.current);
     //클릭 완료!
     setIsClick(true);
   };

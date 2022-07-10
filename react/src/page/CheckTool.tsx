@@ -44,6 +44,10 @@ function CheckTool({
   const bodyPix = useBodyPix();
   const { tflite, isSIMDSupported } = useTFLite(segmentationConfig);
 
+  
+  const zoomVideoCapture = useCapture(setCheckedPhotoList, checkedPhotoList, {eltype: "className", elname: "single-main-container__canvas"});
+  const virtualBgCapture = useCapture(setCheckedPhotoList, checkedPhotoList, {eltype: "id", elname: "grid-bg-photo"});
+  
   const createImage = (iamge: string) => {
     const imageEl = document.createElement("img");
     imageEl.src = iamge;
@@ -53,17 +57,15 @@ function CheckTool({
       height: 250,
     });
   };
-
-  const {clickCapture, image} = useCapture(setCheckedPhotoList, checkedPhotoList, {eltype: "className", elname: "single-main-container__canvas"});
-  
+  console.log(checkedPhotoList);
   useEffect(() =>{
-    if(image){
-      createImage(image);
+    if(zoomVideoCapture.image){
+      createImage(zoomVideoCapture.image);
     }
-  },[image])
+  },[zoomVideoCapture.image])
 
   const clickCheck = () => {
-    clickCapture();
+    zoomVideoCapture.clickCapture();
   };
   return (
     <>
@@ -91,6 +93,7 @@ function CheckTool({
       <label>타이머</label>
       <input type="text" placeholder="5초" />
       <button onClick={clickCheck}>검사하기</button>
+      <button onClick={virtualBgCapture.clickCapture}>ddd</button>
       {sourcePlayback && tflite && bodyPix && (
         <VirtualPhoto
           sourcePlayback={sourcePlayback}
@@ -99,6 +102,8 @@ function CheckTool({
           postProcessingConfig={postProcessingConfig}
           bodyPix={bodyPix}
           tflite={tflite}
+          setCheckedPhotoList={setCheckedPhotoList}
+          checkedPhotoList={checkedPhotoList}
         />
       )}
     </>
