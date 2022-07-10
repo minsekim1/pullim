@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import VirtualPhoto from "../components/VirtualPhoto";
 import {
   BackgroundConfig,
@@ -9,7 +9,6 @@ import { SegmentationConfig } from "../core/helpers/segmentationHelper";
 import { SourcePlayback } from "../core/helpers/sourceHelper";
 import useBodyPix from "../core/hooks/useBodyPix";
 import useTFLite from "../core/hooks/useTFLite";
-import useCapture from "../hook/useCapture";
 import { PhotoType } from "../types/PrescriptionType";
 
 interface CheckToolPropsType {
@@ -43,34 +42,88 @@ function CheckTool({
     });
   const bodyPix = useBodyPix();
   const { tflite, isSIMDSupported } = useTFLite(segmentationConfig);
-
+  const [isClick, setIsClick] = useState<Boolean>(false);
   
-  const zoomVideoCapture = useCapture(setCheckedPhotoList, checkedPhotoList, {eltype: "className", elname: "single-main-container__canvas"});
-  const virtualBgCapture = useCapture(setCheckedPhotoList, checkedPhotoList, {eltype: "id", elname: "grid-bg-photo"});
-  
-  const createImage = (iamge: string) => {
+  const createImage = () => {
+    const zoomCanvas = document.querySelector('.single-main-container__canvas') as HTMLCanvasElement;
+    const imageBase64 = zoomCanvas.toDataURL("image/png");
     const imageEl = document.createElement("img");
-    imageEl.src = iamge;
+    imageEl.src = imageBase64;
     setSourcePlayback({
       htmlElement: imageEl,
       width: 400,
       height: 250,
     });
+    setIsClick(false);
   };
-  console.log(checkedPhotoList);
+
+  const bringImage = () => {
+    const canvas = document.querySelector("#grid-bg-photo") as HTMLCanvasElement;
+    const img = canvas.toDataURL("image/png");
+    return img;
+  };
+
+  const setImage = useCallback(async (image: string | undefined) => {
+      if (!image) {
+        return;
+      }
+
+      const now = new Date();
+      const fileName = `checked_photo_${now.getFullYear()}${
+        now.getMonth() + 1
+      }${now.getDate()}${now.getHours()}${now.getMinutes()}${now.getSeconds()}.png`;
+
+      await fetch(image)
+        .then((res) => res.blob())
+        .then((blob) => {
+          const file = new File([blob], fileName, { type: "image/png" });
+          const obj: PhotoType = {
+            image: image,
+            name: fileName,
+            file: file,
+          };
+          setCheckedPhotoList([obj, ...checkedPhotoList]);
+        });
+    },[checkedPhotoList, setCheckedPhotoList]);
+
   useEffect(() =>{
-    if(zoomVideoCapture.image){
-      createImage(zoomVideoCapture.image);
+    if(isClick){
+      createImage();
+      console.log('useEffect1');
     }
-  },[zoomVideoCapture.image])
+  },[isClick]);
+
+  useEffect(() => {
+    if(isClick && sourcePlayback){
+      const image = bringImage();
+      setImage(image);
+      console.log('useEffect2');
+    }
+  },[sourcePlayback, isClick, setImage]);
+    
 
   const clickCheck = () => {
-    zoomVideoCapture.clickCapture();
+    setIsClick(true);
   };
   return (
     <>
       <h4 style={{ color: "black" }}>검사툴</h4>
-      <div id="image-container">
+      <div
+        style={{
+          width: "90%",
+          padding: "10px",
+          height: "90vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          overflowY: "auto",
+        }}
+      >
+
+        <label>타이머</label>
+        <input type="text" placeholder="5초" />
+        <button onClick={clickCheck}>검사하기</button>
+        <div id="image-container">
         {checkedPhotoList.length !== 0 &&
           checkedPhotoList.map((checkedPhoto, i) => (
             <div
@@ -90,22 +143,21 @@ function CheckTool({
             </div>
           ))}
       </div>
-      <label>타이머</label>
-      <input type="text" placeholder="5초" />
-      <button onClick={clickCheck}>검사하기</button>
-      <button onClick={virtualBgCapture.clickCapture}>ddd</button>
-      {sourcePlayback && tflite && bodyPix && (
-        <VirtualPhoto
-          sourcePlayback={sourcePlayback}
-          backgroundConfig={backgroundConfig}
-          segmentationConfig={segmentationConfig}
-          postProcessingConfig={postProcessingConfig}
-          bodyPix={bodyPix}
-          tflite={tflite}
-          setCheckedPhotoList={setCheckedPhotoList}
-          checkedPhotoList={checkedPhotoList}
-        />
-      )}
+        {sourcePlayback && tflite && bodyPix && (
+          <VirtualPhoto
+            sourcePlayback={sourcePlayback}
+            backgroundConfig={backgroundConfig}
+            segmentationConfig={segmentationConfig}
+            postProcessingConfig={postProcessingConfig}
+            bodyPix={bodyPix}
+            tflite={tflite}
+            setCheckedPhotoList={setCheckedPhotoList}
+            checkedPhotoList={checkedPhotoList}
+            isClick={isClick}
+            setIsClick={setIsClick}
+          />
+        )}
+      </div>
     </>
   );
 }
