@@ -6,6 +6,8 @@ import { SegmentationConfig } from '../core/helpers/segmentationHelper'
 import { SourcePlayback } from '../core/helpers/sourceHelper'
 import useRenderingPipeline from '../core/hooks/useRenderingPipeline'
 import { TFLite } from '../core/hooks/useTFLite'
+import useCapture from '../hook/useCapture'
+import { PhotoType } from '../types/PrescriptionType'
 
 interface VirtualPhotoPropsType {
   sourcePlayback: SourcePlayback
@@ -14,9 +16,18 @@ interface VirtualPhotoPropsType {
   postProcessingConfig: PostProcessingConfig
   bodyPix: BodyPix
   tflite: TFLite
+  setCheckedPhotoList: Function
+  checkedPhotoList: PhotoType[]
 }
 
 function VirtualPhoto(props:VirtualPhotoPropsType) {
+  // const onClickHandler = (e:React.MouseEvent<HTMLCanvasElement, MouseEvent>) =>{
+  //   if(canvasRef.current){
+  //     const canvas = canvasRef.current;
+  //     const img = canvas.toDataURL("image/png");
+  //     console.log(img);
+  //   }
+  // }
   const {
     pipeline,
     backgroundImageRef,
@@ -43,22 +54,22 @@ function VirtualPhoto(props:VirtualPhotoPropsType) {
       position: 'relative'}}>
       {props.backgroundConfig.type === 'image' && (
         <img
-          ref={backgroundImageRef}
-          src={props.backgroundConfig.url}
-          alt=""
-          hidden={props.segmentationConfig.pipeline === 'webgl2'}
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-          }}
+        ref={backgroundImageRef}
+        src={props.backgroundConfig.url}
+        alt=""
+        hidden={props.segmentationConfig.pipeline === 'webgl2'}
+        style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+        }}
         />
-      )}
+        )}
       <canvas
+        id="grid-bg-photo"
         // The key attribute is required to create a new canvas when switching
         // context mode
-        id="grid-bg-photo"
         key={props.segmentationConfig.pipeline}
         ref={canvasRef}
         width={props.sourcePlayback.width}

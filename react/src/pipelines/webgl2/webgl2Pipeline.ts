@@ -46,8 +46,8 @@ export function buildWebGL2Pipeline(
   const [segmentationWidth, segmentationHeight] = inputResolutions[
     segmentationConfig.inputResolution
   ]
-
-  const gl = canvas.getContext('webgl2')!
+  //preserveDrawingBuffer옵션은 버퍼에 데이터를 남기도록 하느 것이다. 사양을 위해서 원래는 비우는 것 같음.
+  const gl = canvas.getContext('webgl2', {preserveDrawingBuffer: true})!
 
   const vertexShader = compileShader(gl, gl.VERTEX_SHADER, vertexShaderSource)
 
