@@ -54,7 +54,6 @@ function CheckTool({
       width: 400,
       height: 250,
     });
-    setIsClick(false);
   };
 
   const bringImage = () => {
@@ -88,16 +87,21 @@ function CheckTool({
 
   useEffect(() =>{
     if(isClick){
-      createImage();
-      console.log('useEffect1');
+      setTimeout(() =>{
+        createImage();
+        console.log('useEffect1');
+      },5000)
     }
   },[isClick]);
 
   useEffect(() => {
     if(isClick && sourcePlayback){
-      const image = bringImage();
-      setImage(image);
-      console.log('useEffect2');
+      setTimeout(() =>{
+        const image = bringImage();
+        setImage(image);
+        console.log('useEffect2');
+        setIsClick(false);
+      },6000);
     }
   },[sourcePlayback, isClick, setImage]);
     
