@@ -5,6 +5,7 @@
   "repository": "https://github.com/minsekim1/pullim.git",
   "license": "MIT",
   "scripts": {
-    "aws":"ssh -i ./pullim.pem ec2-user@ec2-3-36-135-151.ap-northeast-2.compute.amazonaws.com"
+    "aws": "ssh -i ./pullim.pem ec2-user@ec2-3-36-135-151.ap-northeast-2.compute.amazonaws.com",
+    "win_key_permission": "icacls.exe pullim.pem /reset && icacls.exe pullim.pem /grant:r %username%:(R) && icacls.exe pullim.pem /inheritance:r "
   }
 }
