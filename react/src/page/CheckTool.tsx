@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import {Socket, io} from 'socket.io-client';
 import VirtualPhoto from "../components/VirtualPhoto";
 import {
   BackgroundConfig,
@@ -10,15 +11,22 @@ import { SourcePlayback } from "../core/helpers/sourceHelper";
 import useBodyPix from "../core/hooks/useBodyPix";
 import useTFLite from "../core/hooks/useTFLite";
 import { PhotoType } from "../types/PrescriptionType";
+const SOCKET_URL = "http://localhost:5002";
 
 interface CheckToolPropsType {
   checkedPhotoList: PhotoType[];
   setCheckedPhotoList: Function;
+  isHost: string;
+  userName: string;
+  meetingNumber: string;
 }
 
 function CheckTool({
   checkedPhotoList,
   setCheckedPhotoList,
+  isHost,
+  userName,
+  meetingNumber
 }: CheckToolPropsType) {
   const [sourcePlayback, setSourcePlayback] = useState<SourcePlayback>();
   const [backgroundConfig, setBackgroundConfig] = useState<BackgroundConfig>({
@@ -43,6 +51,11 @@ function CheckTool({
   const bodyPix = useBodyPix();
   const { tflite, isSIMDSupported } = useTFLite(segmentationConfig);
   const [isClick, setIsClick] = useState<Boolean>(false);
+  const [second, setSecond] = useState<string>('');
+
+  const changeSecond = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSecond(e.target.value);
+  }
   
   const createImage = () => {
     const zoomCanvas = document.querySelector('.single-main-container__canvas') as HTMLCanvasElement;
@@ -85,14 +98,41 @@ function CheckTool({
         });
     },[checkedPhotoList, setCheckedPhotoList]);
 
+  let websocket: Socket | undefined = undefined;
+  const [socketData, setSocketData] = useState<Socket>();
+  useEffect(() => {
+    if (websocket === undefined) {
+      websocket = io(SOCKET_URL, {
+        path: "/socket.io", // 서버 path와 일치시켜준다
+        transports: ["websocket"],
+      });
+
+      websocket.on("connect", () => {
+        console.info("connect!");
+        if (websocket !== undefined) websocket.emit("join", JSON.stringify({room_id: meetingNumber, isHost,  userName}));
+      });
+      websocket.on("disconnect", () => console.info("disconnect!"));
+      setSocketData(websocket);
+    }
+  },[]);
+
+  useEffect(() => {
+    if(isClick && socketData){
+      console.log(socketData);
+      console.log('된다');
+      socketData.emit('checkstart', JSON.stringify({room_id: meetingNumber, isHost,  userName, time: second}));
+    }
+  },[isHost, meetingNumber, second, userName, websocket, isClick, socketData])
+
+
   useEffect(() =>{
     if(isClick){
       setTimeout(() =>{
         createImage();
         console.log('useEffect1');
-      },5000)
+      },Number(second) * 1000);
     }
-  },[isClick]);
+  },[isClick, second]);
 
   useEffect(() => {
     if(isClick && sourcePlayback){
@@ -101,12 +141,18 @@ function CheckTool({
         setImage(image);
         console.log('useEffect2');
         setIsClick(false);
-      },6000);
+      },Number(second) * 1000 + 1000);
     }
-  },[sourcePlayback, isClick, setImage]);
+  },[sourcePlayback, isClick, setImage, second]);
     
 
   const clickCheck = () => {
+    if(second === ''){
+      return alert('숫자를 입력해주세요!');
+    }
+    if(Number(second)<1){
+      return alert('숫자는 1이상으로 입력해주세요!');
+    }
     setIsClick(true);
   };
   return (
@@ -125,7 +171,7 @@ function CheckTool({
       >
 
         <label>타이머</label>
-        <input type="text" placeholder="5초" />
+        <input type="number" placeholder="예) 5" onChange={changeSecond} value={second}/>
         <button onClick={clickCheck}>검사하기</button>
         <div id="image-container">
         {checkedPhotoList.length !== 0 &&
@@ -146,7 +192,7 @@ function CheckTool({
               />
             </div>
           ))}
-      </div>
+        </div>
         {sourcePlayback && tflite && bodyPix && (
           <VirtualPhoto
             sourcePlayback={sourcePlayback}
