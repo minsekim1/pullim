@@ -9,6 +9,7 @@ import CheckTool from "./page/CheckTool";
 import { BodyPixView } from "./page/Bodypix";
 import DiagnosticHistory from "./page/DiagnosticHistory";
 import { PhotoType, FileType } from "./types/PrescriptionType";
+import Client from "./page/Client";
 
 ZoomMtg.setZoomJSLib("https://source.zoom.us/2.4.5/lib", "/av");
 
@@ -24,9 +25,9 @@ function App() {
   const [url, setUrl] = useState(
     "https://zoom.us/j/91314635094?pwd=bm5icWNwSTBjdEh6d05ZaUFkbVBJUT09"
   );
-  const [name, setName] = useState("");
+  const [userName, setUserName] = useState("");
   const [isEnter, setIsEnter] = useState(false);
-  const [isHost, setIsHost] = useState("0");
+  const [isHost, setIsHost] = useState("1");
 
   const [memo, setMemo] = useState<string>("");
   const [photoList, setPhotoList] = useState<PhotoType[]>([]);
@@ -63,7 +64,7 @@ function App() {
       sdkKey: sdkKey,
       sdkSecret: sdkKeySecret,
       meetingNumber: meetingNumber,
-      role: isHost,
+      role: "0", //잠시 0으로 뒀고, 풀림에서 정보 받으면 isHost로 바꾸자.
       success: () => console.info("generateSDKSignature success"),
       error: (e: any) => console.info("generateSDKSignature fail", e),
     });
@@ -113,7 +114,7 @@ function App() {
     const join_data = {
       signature: generateSDKSignature(),
       meetingNumber: meetingNumber,
-      userName: name,
+      userName: userName,
       sdkKey: sdkKey,
       userEmail: userEmail,
       passWord: passWord,
@@ -168,12 +169,14 @@ function App() {
         </div>
 
         <h2>참가자 이름</h2>
-        <input value={name} onChange={(e: any) => setName(e.target.value)} />
+        <input value={userName} onChange={(e: any) => setUserName(e.target.value)} />
         <br />
         <button onClick={getSignature}>Join Meeting</button>
       </main>
-
-      {isEnter && (
+      {isHost === "0" && isEnter && (
+        <Client meetingNumber={meetingNumber} isHost={isHost} userName={userName}/>
+      )}
+      {isHost === "1" && isEnter && (
         <>
           <div
             id="pullim-page"
@@ -217,6 +220,9 @@ function App() {
               <CheckTool
                 checkedPhotoList={checkedPhotoList}
                 setCheckedPhotoList={setCheckedPhotoList}
+                isHost={isHost}
+                userName={userName}
+                meetingNumber={meetingNumber}
               />
             )}
             {currentPage === "DiagnosticHistory" && <DiagnosticHistory />}
@@ -272,7 +278,7 @@ function App() {
                   setIsModal(false);
                 }}
                 src={src}
-                alt="aa"
+                alt="큰 이미지"
               />
             </div>
           )}
