@@ -35,9 +35,7 @@ io.on("connection", function (socket) {
     const { room_id, isHost, userName, time } = JSON.parse(data);
     console.log(room_id, isHost, userName, time);
     console.log(socket.rooms);
-    socket.to(room_id).emit('checkstart2', {
-      time
-    });
+    io.to('/'+room_id).emit('checkstart2', {time});
     l("checkstart", "green", socket.id);
   });
 
