@@ -9,7 +9,7 @@ interface ElObjectType {
     elname: string 
 }
 
-function useCapture(setPhotoList: Function, photoList: PhotoType[], elObject: ElObjectType, cb?:Function) {
+function useCapture(setPhotoList: Function, photoList: PhotoType[], elObject: ElObjectType) {
   //ref는 고정적으로 값을 가지고 있음
   const vedioRef = useRef();
   const [isClick, setIsClick] = useState(false as any);
@@ -54,20 +54,18 @@ function useCapture(setPhotoList: Function, photoList: PhotoType[], elObject: El
   useEffect(() => {
     if (isClick) {
       takeScreenshot();
-      setIsClick(false);
-      console.log(image);
     }
   }, [isClick, takeScreenshot]);
 
   //클릭 후 이미지 저장 반응  
   useEffect(() => {
     if (isClick && image) {
-      //미들웨어를 넣을지 말지
       setImage(image);
+      setIsClick(false);
     }
   }, [isClick, image, setImage]);
 
-  return clickCapture;
+  return {clickCapture, image};
 }
 
 export default useCapture;
