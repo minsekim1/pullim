@@ -1,8 +1,8 @@
-// const crypto = require('crypto');
-import crypto from 'crypto';
-import axios from 'axios';
-// const axios = require('axios');
-require('dotenv').config()
+const crypto = require('crypto');
+// import crypto from 'crypto';
+// import axios from 'axios';
+const axios = require('axios');
+require('dotenv').config({ path: "../.env" })
 
 function makeSignature() {
   var space = ' '; // one space
@@ -10,9 +10,9 @@ function makeSignature() {
   var method = 'POST'; // method
   var timestamp = Date.now().toString(); // current timestamp (epoch)
   var accessKey = process.env.NAVER_ACCESSKEY; // access key ids
-  var secretKey : any = process.env.NAVER_SECRETKEY; // secret key
+  var secretKey = process.env.NAVER_SECRETKEY; // secret key
   const url2 = `/alimtalk/v2/services/${process.env.NAVER_CHANNEL_ID}/messages`;
-  let message : any[]= [];
+  let message = [];
   let hmac = crypto.createHmac('sha256', secretKey);
   
   message.push(method);
@@ -79,6 +79,7 @@ const getRequestParams = ({ type, to, data }) => {
     }
   }
   if (type === '14') {
+    console.log(data.URL)
     return {
       templateCode: type,
       plusFriendId: process.env.MYCH,
@@ -94,10 +95,10 @@ const getRequestParams = ({ type, to, data }) => {
           ※주의 사항`,
           buttons: [
             {
-              type: 'WL',
-              name: '안내 사항',
-              linkAndroid: `https://${data.URL}`,
-              linkIos: `https://${data.URL}`,
+              type: 'AL',
+              name: '입장하기',
+              schemeAndroid: `https://${data.URL}`,
+              schemeIos: `https://${data.URL}`
             }
           ]
         }
@@ -113,7 +114,7 @@ const sendKakaoMessage = async ({ templateCode, to, data }) => {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'x-ncp-apigw-timestamp': Date.now().toString(),
-        'x-ncp-iam-access-key' : process.env.NAVER_ACCESSKEY as string,
+        'x-ncp-iam-access-key' : process.env.NAVER_ACCESSKEY,
         'x-ncp-apigw-signature-v2': makeSignature(),
       },
     });

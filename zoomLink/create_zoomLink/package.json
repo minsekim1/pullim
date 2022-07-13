@@ -1,8 +1,8 @@
 {
-  "name": "kakaotest",
+  "name": "create_zoomlink",
   "version": "1.0.0",
   "description": "",
-  "main": "kakao_alim.js",
+  "main": "clientApiList.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,9 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "cron": "^2.0.0",
-    "dotenv": "^16.0.1",
-    "node-cron": "^3.0.1",
-    "uuid": "^8.3.2"
+    "axios": "^0.27.2"
   }
 }
