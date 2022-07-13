@@ -252,13 +252,6 @@ function App() {
             style={{ position: "absolute", top: 0, left: "50%", zIndex: 99 }}
             onClick={() => setIsTensor((prev) => !prev)}
           >
-<<<<<<< HEAD
-            <img style={{ width: "100%" }} onClick={() =>{
-              setIsModal(false);
-            }} src={src} alt="aa" />
-          </div>
-
-=======
             그리드배경버튼
           </button> */}
 
@@ -282,7 +275,6 @@ function App() {
                 alt="aa"
               />
             </div>
->>>>>>> ededb6a (virtual background photo add: 80%)
           )}
         </>
       )}
