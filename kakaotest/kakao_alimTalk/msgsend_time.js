@@ -2,7 +2,7 @@ const cron = require('node-cron');
 const customerReservationList = require('./customerReservationList');
 const {zoomStartMsg, zoomEarlyMsg, zoomLink} = require('./template_list');
 const sendKakaoMessage = require('./kakao_alim');
-const { createMeeting } = require('../../zoomLink/create_zoomLink/zoommeeting');
+const { createMeeting } = require('../../zoomLink/create_zoomLink/zoom_meeting');
 const clientApiList = require('../../zoomLink/create_zoomLink/clientApiList');
 
 cron.schedule('*/2 * * * * *', async() => {  //10분마다 실행
