@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { SyntheticEvent, useCallback, useEffect, useRef, useState } from "react";
 import { Socket, io } from "socket.io-client";
 import VirtualPhoto from "../components/VirtualPhoto";
 import Peer from "simple-peer";
@@ -53,75 +53,24 @@ function CheckTool({
   const bodyPix = useBodyPix();
   const { tflite, isSIMDSupported } = useTFLite(segmentationConfig);
   const [isClick, setIsClick] = useState<Boolean>(false);
-  const [second, setSecond] = useState<string>("");
   const [socketData, setSocketData] = useState<Socket>();
 
   const [stream, setStream] = useState<MediaStream>();
   const [myId, setMyId] = useState("");
+  const [callAccepted, setCallAccepted] = useState(false);
+
   const [caller, setCaller] = useState("");
   const [receivingCall, setReceivingCall] = useState(false);
-  const [callAccepted, setCallAccepted] = useState(false);
   const [callerSignal, setCallerSignal] = useState<Peer.SignalData | string>(
     ""
   );
+  const [isLoading, setLoading] = useState(false);
 
   const myVideo = useRef() as React.LegacyRef<HTMLVideoElement> &
     React.MutableRefObject<HTMLVideoElement>;
   const userVideo = useRef() as React.LegacyRef<HTMLVideoElement> &
     React.MutableRefObject<HTMLVideoElement>;
   const connection = useRef<Peer.Instance>();
-
-  const changeSecond = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSecond(e.target.value);
-  };
-
-  const createImage = () => {
-    const zoomCanvas = document.querySelector(
-      ".single-main-container__canvas"
-    ) as HTMLCanvasElement;
-    const imageBase64 = zoomCanvas.toDataURL("image/png");
-    const imageEl = document.createElement("img");
-    imageEl.src = imageBase64;
-    setSourcePlayback({
-      htmlElement: imageEl,
-      width: 400,
-      height: 250,
-    });
-  };
-
-  const bringImage = () => {
-    const canvas = document.querySelector(
-      "#grid-bg-photo"
-    ) as HTMLCanvasElement;
-    const img = canvas.toDataURL("image/png");
-    return img;
-  };
-
-  const setImage = useCallback(
-    async (image: string | undefined) => {
-      if (!image) {
-        return;
-      }
-
-      const now = new Date();
-      const fileName = `checked_photo_${now.getFullYear()}${
-        now.getMonth() + 1
-      }${now.getDate()}${now.getHours()}${now.getMinutes()}${now.getSeconds()}.png`;
-
-      await fetch(image)
-        .then((res) => res.blob())
-        .then((blob) => {
-          const file = new File([blob], fileName, { type: "image/png" });
-          const obj: PhotoType = {
-            image: image,
-            name: fileName,
-            file: file,
-          };
-          setCheckedPhotoList([obj, ...checkedPhotoList]);
-        });
-    },
-    [checkedPhotoList, setCheckedPhotoList]
-  );
 
   let websocket: Socket | undefined = undefined;
   useEffect(() => {
@@ -183,33 +132,18 @@ function CheckTool({
     }
   }, [meetingNumber, myId, socketData, stream]);
 
-  useEffect(() => {
-    if (isClick) {
-      setTimeout(() => {
-        createImage();
-        console.log("useEffect1");
-      }, Number(second) * 1000);
-    }
-  }, [isClick, second]);
-
-  useEffect(() => {
-    if (isClick && sourcePlayback) {
-      setTimeout(() => {
-        const image = bringImage();
-        setImage(image);
-        console.log("useEffect2");
-        setIsClick(false);
-      }, Number(second) * 1000 + 1000);
-    }
-  }, [sourcePlayback, isClick, setImage, second]);
+  function handleVideoLoad(event: SyntheticEvent) {
+    const video = event.target as HTMLVideoElement
+    setSourcePlayback({
+      htmlElement: video,
+      width: video.videoWidth,
+      height: video.videoHeight,
+    })
+    setLoading(false)
+    console.log(video);
+  }
 
   const clickCheck = () => {
-    if (second === "") {
-      return alert("숫자를 입력해주세요!");
-    }
-    if (Number(second) < 1) {
-      return alert("숫자는 1이상으로 입력해주세요!");
-    }
     setIsClick(true);
   };
 
@@ -227,16 +161,9 @@ function CheckTool({
           overflowY: "auto",
         }}
       >
-        <label>타이머</label>
-        <input
-          type="number"
-          placeholder="예) 5"
-          onChange={changeSecond}
-          value={second}
-        />
         <button onClick={clickCheck}>캡처하기</button>
         <button>비디오</button>
-        <div style={{ width: "300px", height: "300px", visibility: "hidden" }}>
+        {/* <div style={{ width: "300px", height: "300px", visibility: "hidden" }}>
           <video
             ref={myVideo}
             style={{ width: "100%", height: "100%" }}
@@ -244,15 +171,17 @@ function CheckTool({
             autoPlay
             muted
           />
-        </div>
+        </div> */}
         {callAccepted && (
           <div style={{ width: "300px", height: "300px" }}>
+            {isLoading && <progress></progress>}
             <video
-              style={{ width: "100%", height: "100%" }}
+              style={{ width: "100%", height: "100%", visibility: "hidden", position: "absolute" }}
               playsInline
               ref={userVideo}
               autoPlay
               muted
+              onLoadedData={handleVideoLoad}
             />
           </div>
         )}
@@ -284,10 +213,6 @@ function CheckTool({
             postProcessingConfig={postProcessingConfig}
             bodyPix={bodyPix}
             tflite={tflite}
-            setCheckedPhotoList={setCheckedPhotoList}
-            checkedPhotoList={checkedPhotoList}
-            isClick={isClick}
-            setIsClick={setIsClick}
           />
         )}
       </div>

@@ -184,8 +184,6 @@ function App() {
             top: 0,
             zIndex: 1,
             right: 0,
-            height: "50vh",
-            backgroundColor: "rgba(255,255,255)",
           }}
         >
           <Client

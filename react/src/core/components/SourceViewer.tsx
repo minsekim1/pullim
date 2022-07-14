@@ -69,14 +69,7 @@ function SourceViewer(props: SourceViewerProps) {
   return (
     <div>
       {isLoading && <div>도는 중</div>}
-      {props.sourceConfig.type === 'image' ? (
-        <img
-          src={sourceUrl}
-          hidden={isLoading}
-          alt=""
-          onLoad={handleImageLoad}
-        />
-      ) : isCameraError ? (
+      {isCameraError ? (
         <div>video error</div>
       ) : (
         <video
