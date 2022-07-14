@@ -6,7 +6,6 @@ import CaptureList from "./page/CaptureList";
 import ButtonGroup from "./components/ButtonGroup";
 import RecordAndPrescription from "./page/RecordAndPrescription";
 import CheckTool from "./page/CheckTool";
-import { BodyPixView } from "./page/Bodypix";
 import DiagnosticHistory from "./page/DiagnosticHistory";
 import { PhotoType, FileType } from "./types/PrescriptionType";
 import Client from "./page/Client";
@@ -38,11 +37,7 @@ function App() {
   const [isModal, setIsModal] = useState(false);
   const [src, setSrc] = useState("");
 
-
   const [currentPage, setCurrentPage] = useState("");
-  const [isTensor, setIsTensor] = useState(false);
-
-  const [isBodypix, setIsBodypix] = useState(false);
 
   useEffect(() => {
     if (document) {
@@ -52,7 +47,10 @@ function App() {
   }, []);
 
   const sdkKey = "xPN1ctkMLTAqaWGsE7FDSonJSEOO8B0XtQf8";
-  const meetingNumber = url.slice(url.indexOf("/j/") + 3, url.indexOf("pwd=") - 1);
+  const meetingNumber = url.slice(
+    url.indexOf("/j/") + 3,
+    url.indexOf("pwd=") - 1
+  );
   const leaveUrl = "http://localhost:3000";
   const userEmail = "";
   const passWord = url.slice(url.indexOf("pwd=") + 4, url.length);
@@ -68,7 +66,9 @@ function App() {
       success: () => console.info("generateSDKSignature success"),
       error: (e: any) => console.info("generateSDKSignature fail", e),
     });
-  function getSignature(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+  function getSignature(
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) {
     event.preventDefault();
 
     const root = document.getElementById("zmmtg-root");
@@ -100,7 +100,8 @@ function App() {
       isSupportNonverbal: true,
       isShowJoiningErrorDialog: true,
 
-      inviteUrlFormat: "https://localhost:3000/?url=https://us04web.zoom.us/j/{0}?pwd={1}",
+      inviteUrlFormat:
+        "https://localhost:3000/?url=https://us04web.zoom.us/j/{0}?pwd={1}",
 
       meetingInfo: ["participant"],
       disableVoIP: false,
@@ -167,14 +168,32 @@ function App() {
             참가자
           </label>
         </div>
-
         <h2>참가자 이름</h2>
-        <input value={userName} onChange={(e: any) => setUserName(e.target.value)} />
+        <input
+          value={userName}
+          onChange={(e: any) => setUserName(e.target.value)}
+        />
         <br />
         <button onClick={getSignature}>Join Meeting</button>
       </main>
       {isHost === "0" && isEnter && (
-        <Client meetingNumber={meetingNumber} isHost={isHost} userName={userName}/>
+        <div
+          style={{
+            width: "400px",
+            position: "absolute",
+            top: 0,
+            zIndex: 1,
+            right: 0,
+            height: "50vh",
+            backgroundColor: "rgba(255,255,255)",
+          }}
+        >
+          <Client
+            meetingNumber={meetingNumber}
+            isHost={isHost}
+            userName={userName}
+          />
+        </div>
       )}
       {isHost === "1" && isEnter && (
         <>
@@ -197,7 +216,6 @@ function App() {
             }}
           >
             {currentPage === "CaptureList" && (
-
               <CaptureList
                 photoList={photoList}
                 setPhotoList={setPhotoList}
@@ -232,35 +250,6 @@ function App() {
             photoList={photoList}
             setCurrentPage={setCurrentPage}
           />
-          {/* {isTensor && (
-            <div
-              style={{
-                position: "absolute",
-                left: 0,
-                zIndex: 99,
-                top: 0,
-                width: 300,
-                height: "80vh",
-                backgroundColor: "rgba(0,0,0,0.4)",
-                color: "white",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                overflow: "scroll",
-              }}
-            >
-              <div style={{ minHeight: "1000px" }}>
-                <BodyPixView />
-              </div>
-            </div>
-          )}
-          <button
-            style={{ position: "absolute", top: 0, left: "50%", zIndex: 99 }}
-            onClick={() => setIsTensor((prev) => !prev)}
-          >
-            그리드배경버튼
-          </button> */}
-
           {isModal && (
             <div
               style={{
