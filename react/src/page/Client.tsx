@@ -1,6 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
 import { Socket, io } from "socket.io-client";
 import Peer from "simple-peer";
+import { SourcePlayback } from "../core/helpers/sourceHelper";
+import { BackgroundConfig, backgroundImageUrls } from "../core/helpers/backgroundHelper";
+import { SegmentationConfig } from "../core/helpers/segmentationHelper";
+import { PostProcessingConfig } from "../core/helpers/postProcessingHelper";
+import useBodyPix from "../core/hooks/useBodyPix";
+import useTFLite from "../core/hooks/useTFLite";
+import VirtualPhoto from "../components/VirtualPhoto";
 const SOCKET_URL = "http://localhost:5002";
 
 interface ClientPropsType {
@@ -10,20 +17,41 @@ interface ClientPropsType {
 }
 
 function Client({ meetingNumber, isHost, userName }: ClientPropsType) {
+
+  const [sourcePlayback, setSourcePlayback] = useState<SourcePlayback>();
+  const [backgroundConfig, setBackgroundConfig] = useState<BackgroundConfig>({
+    type: "image",
+    url: backgroundImageUrls[0],
+  });
+  const [segmentationConfig, setSegmentationConfig] =
+    useState<SegmentationConfig>({
+      model: "meet",
+      backend: "wasm",
+      inputResolution: "160x96",
+      pipeline: "webgl2",
+    });
+  const [postProcessingConfig, setPostProcessingConfig] =
+    useState<PostProcessingConfig>({
+      smoothSegmentationMask: true,
+      jointBilateralFilter: { sigmaSpace: 1, sigmaColor: 0.1 },
+      coverage: [0.5, 0.75],
+      lightWrapping: 0.3,
+      blendMode: "screen",
+    });
+  const bodyPix = useBodyPix();
+  const { tflite, isSIMDSupported } = useTFLite(segmentationConfig);
+
   const [myId, setMyId] = useState("");
   const [stream, setStream] = useState<MediaStream>();
   const [socketData, setSocketData] = useState<Socket>();
 
   const [caller, setCaller] = useState("");
   const [receivingCall, setReceivingCall] = useState(false);
-  const [callAccepted, setCallAccepted] = useState(false);
   const [callerSignal, setCallerSignal] = useState<Peer.SignalData | string>(
     ""
   );
-
+  const [isLoading, setLoading] = useState(false);
   const myVideo = useRef() as React.LegacyRef<HTMLVideoElement> &
-    React.MutableRefObject<HTMLVideoElement>;
-  const userVideo = useRef() as React.LegacyRef<HTMLVideoElement> &
     React.MutableRefObject<HTMLVideoElement>;
   const connection = useRef<Peer.Instance>();
 
@@ -70,8 +98,6 @@ function Client({ meetingNumber, isHost, userName }: ClientPropsType) {
 
   useEffect(() => {
     if (receivingCall && caller && callerSignal && socketData) {
-      setCallAccepted(true);
-      console.log(stream);
       const peer = new Peer({
         initiator: false,
         trickle: false,
@@ -80,37 +106,46 @@ function Client({ meetingNumber, isHost, userName }: ClientPropsType) {
       peer.on("signal", (data) => {
         socketData.emit("answerCall", { signal: data, to: caller });
       });
-      peer.on("stream", (stream) => {
-        console.log(stream);
-        userVideo.current.srcObject = stream;
-      });
       peer.signal(callerSignal);
       connection.current = peer;
     }
   }, [caller, callerSignal, receivingCall, socketData, stream]);
 
+  function handleVideoLoad(event: SyntheticEvent) {
+    const video = event.target as HTMLVideoElement
+    setSourcePlayback({
+      htmlElement: video,
+      width: video.videoWidth,
+      height: video.videoHeight,
+    })
+    setLoading(false)
+    console.log(video);
+  }
+
+
   return (
     <div>
-      <div style={{ width: "300px", height: "300px" }}>
+      <div style={{ width: "100%", height: "100%"}}>
+        {isLoading && <progress></progress>}
         <video
           ref={myVideo}
-          style={{ width: "100%", height: "100%", visibility: "hidden" }}
+          style={{ width: "100%", height: "100%", visibility: "hidden", position: "absolute"}}
           playsInline
           autoPlay
           muted
+          onLoadedData={handleVideoLoad}
         />
       </div>
-      {callAccepted && (
-        <div style={{ width: "300px", height: "300px" }}>
-          <video
-            style={{ width: "100%", height: "100%" }}
-            playsInline
-            ref={userVideo}
-            autoPlay
-            muted
+      {sourcePlayback && tflite && bodyPix && (
+          <VirtualPhoto
+            sourcePlayback={sourcePlayback}
+            backgroundConfig={backgroundConfig}
+            segmentationConfig={segmentationConfig}
+            postProcessingConfig={postProcessingConfig}
+            bodyPix={bodyPix}
+            tflite={tflite}
           />
-        </div>
-      )}
+        )}
     </div>
   );
 }
