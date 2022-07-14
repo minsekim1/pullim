@@ -6,8 +6,12 @@
   "license": "MIT",
   "scripts": {
     "aws": "ssh -i ./pullim.pem ec2-user@ec2-3-36-135-151.ap-northeast-2.compute.amazonaws.com",
+<<<<<<< HEAD
     "win_key_permission": "icacls.exe pullim.pem /reset && icacls.exe pullim.pem /grant:r %username%:(R) && icacls.exe pullim.pem /inheritance:r ",
     "react": "cd react && yarn start",
     "server": "cd server && yarn start"
+=======
+    "win_key_permission": "icacls.exe pullim.pem /reset && icacls.exe pullim.pem /grant:r %username%:(R) && icacls.exe pullim.pem /inheritance:r "
+>>>>>>> 61b785c (server GET / Node Server is running ... reponse added)
   }
 }
