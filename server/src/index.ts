@@ -11,7 +11,13 @@ const PORT = 5002;
 const app = express();
 
 const httpServer = http.createServer();
-const io = new ServerIO(httpServer);
+const io = new ServerIO(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+    credentials: true
+  },
+});
 
 io.on("connection", function (socket) {
   // 에러 표시
