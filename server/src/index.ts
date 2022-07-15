@@ -2,6 +2,7 @@ import express from "express";
 import fs from "fs";
 import http from "http";
 import { Server as ServerIO } from "socket.io";
+import cors from 'cors';
 import photoRouter from "./routes/photo";
 import { l } from "./console";
 
@@ -9,6 +10,7 @@ l("SERVER", "red", "is startig ...");
 const PORT = 5002;
 
 const app = express();
+app.use(cors())
 
 const httpServer = http.createServer();
 const io = new ServerIO(httpServer, {
