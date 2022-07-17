@@ -13,7 +13,7 @@ import { SourcePlayback } from "../core/helpers/sourceHelper";
 import useBodyPix from "../core/hooks/useBodyPix";
 import useTFLite from "../core/hooks/useTFLite";
 import { PhotoType } from "../types/PrescriptionType";
-const SOCKET_URL = "3.36.135.151:5002";
+const SOCKET_URL = "https://pul-lim.com/socket";
 
 interface CheckToolPropsType {
   checkedPhotoList: PhotoType[];
