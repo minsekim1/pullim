@@ -66,22 +66,13 @@ function CheckTool({
     ""
   );
   const [isLoading, setLoading] = useState(false);
-
-  const myVideo = useRef() as React.LegacyRef<HTMLVideoElement> &
-    React.MutableRefObject<HTMLVideoElement>;
   const userVideo = useRef() as React.LegacyRef<HTMLVideoElement> &
     React.MutableRefObject<HTMLVideoElement>;
   const connection = useRef<Peer.Instance>();
 
   let websocket: Socket | undefined = undefined;
+
   useEffect(() => {
-    // navigator.mediaDevices
-    //   .getUserMedia({ video: true, audio: false })
-    //   .then((stream) => {
-    //     setStream(stream);
-    //     console.log(stream);
-    //     myVideo.current.srcObject = stream;
-    //   });
     if (websocket === undefined) {
       websocket = io(SOCKET_URL, {
         path: "/socket.io", // 서버 path와 일치시켜준다
@@ -102,9 +93,13 @@ function CheckTool({
       websocket.on("getid", (id) => {
         setMyId(id);
       });
-
-      websocket.on("disconnect", () => console.info("disconnect!"));
       setSocketData(websocket);
+    }
+    return () => {
+      if(websocket){
+        console.log('닫힘!');
+        websocket.disconnect();
+      }
     }
   }, []);
   useEffect(() => {
@@ -115,6 +110,7 @@ function CheckTool({
       });
 
       peer.on("signal", (data) => {
+        console.log(data);
         socketData.emit("caller", {
           room_id: meetingNumber,
           signalData: data,
@@ -129,8 +125,12 @@ function CheckTool({
         setCallAccepted(true);
         peer.signal(signal);
       });
+      socketData.on('disconnect', () => {
+        peer.destroy();
+      })
       connection.current = peer;
     }
+
   }, [meetingNumber, myId, socketData]);
 
   function handleVideoLoad(event: SyntheticEvent) {
@@ -164,15 +164,6 @@ function CheckTool({
       >
         <button onClick={clickCheck}>캡처하기</button>
         <button>비디오</button>
-        {/* <div style={{ width: "300px", height: "300px", visibility: "hidden" }}>
-          <video
-            ref={myVideo}
-            style={{ width: "100%", height: "100%" }}
-            playsInline
-            autoPlay
-            muted
-          />
-        </div> */}
         {callAccepted && (
           <div style={{ width: "300px", height: "300px" }}>
             {isLoading && <progress></progress>}
