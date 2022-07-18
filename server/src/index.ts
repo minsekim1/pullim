@@ -7,12 +7,12 @@ import photoRouter from "./routes/photo";
 import { l } from "./console";
 
 l("SERVER", "red", "is startig ...");
-const PORT = 5002;
+// const PORT = 5002;
 
 const app = express();
 app.use(cors())
 
-const httpServer = http.createServer();
+const httpServer = http.createServer(app);
 const io = new ServerIO(httpServer, {
   cors: {
     origin: "*",
@@ -66,8 +66,6 @@ io.on("connection", function (socket) {
 
 });
 
-io.listen(PORT);
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -85,6 +83,6 @@ app.use("/images", express.static("uploads"));
 
 app.use("/photo", photoRouter);
 
-app.listen("5001", () => {
+httpServer.listen("5001", () => {
   console.log("5001포트 열림");
 });

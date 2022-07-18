@@ -8,7 +8,8 @@ import { PostProcessingConfig } from "../core/helpers/postProcessingHelper";
 import useBodyPix from "../core/hooks/useBodyPix";
 import useTFLite from "../core/hooks/useTFLite";
 import VirtualPhoto from "../components/VirtualPhoto";
-const SOCKET_URL = "http://127.0.0.1:5002";
+const SOCKET_URL = "https://pul-lim.com/server";
+// const SOCKET_URL = "http://localhost:5001";
 
 interface ClientPropsType {
   meetingNumber: string;
