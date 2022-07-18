@@ -84,7 +84,7 @@ function CheckTool({
     //   });
     if (websocket === undefined) {
       websocket = io(SOCKET_URL, {
-        path: "/socket.io", // 서버 path와 일치시켜준다
+        path: "/server/socket.io", // 서버 path와 일치시켜준다
         transports: ["websocket"],
       });
       console.log(SOCKET_URL);
