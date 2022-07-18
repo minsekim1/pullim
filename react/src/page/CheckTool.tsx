@@ -13,8 +13,8 @@ import { SourcePlayback } from "../core/helpers/sourceHelper";
 import useBodyPix from "../core/hooks/useBodyPix";
 import useTFLite from "../core/hooks/useTFLite";
 import { PhotoType } from "../types/PrescriptionType";
-const SOCKET_URL = "https://pul-lim.com/server";
-// const SOCKET_URL = "http://localhost:5001";
+// const SOCKET_URL = "https://pul-lim.com/server";
+const SOCKET_URL = "http://localhost:5001";
 
 interface CheckToolPropsType {
   checkedPhotoList: PhotoType[];
@@ -84,7 +84,7 @@ function CheckTool({
     //   });
     if (websocket === undefined) {
       websocket = io(SOCKET_URL, {
-        path: "/server/socket.io", // 서버 path와 일치시켜준다
+        path: "/socket.io", // 서버 path와 일치시켜준다
         transports: ["websocket"],
       });
       console.log(SOCKET_URL);

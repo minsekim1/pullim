@@ -8,8 +8,8 @@ import { PostProcessingConfig } from "../core/helpers/postProcessingHelper";
 import useBodyPix from "../core/hooks/useBodyPix";
 import useTFLite from "../core/hooks/useTFLite";
 import VirtualPhoto from "../components/VirtualPhoto";
-const SOCKET_URL = "https://pul-lim.com/server";
-// const SOCKET_URL = "http://localhost:5001";
+// const SOCKET_URL = "https://pul-lim.com/server";
+const SOCKET_URL = "http://localhost:5001";
 
 interface ClientPropsType {
   meetingNumber: string;
@@ -68,7 +68,7 @@ function Client({ meetingNumber, isHost, userName }: ClientPropsType) {
       });
     if (websocket === undefined) {
       websocket = io(SOCKET_URL, {
-        path: "/server/socket.io/", // 서버 path와 일치시켜준다
+        path: "/socket.io", // 서버 path와 일치시켜준다
         transports: ["websocket"],
       });
 
