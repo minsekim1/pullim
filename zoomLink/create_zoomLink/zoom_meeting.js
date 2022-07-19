@@ -62,4 +62,8 @@ function createMeeting(API_KEY,API_SEC){ //줌링크 생성
     })
 }
 
+// const a = createMeeting(API_KEY1, API_SEC1).then((data)=>(
+//     console.log(data.data.join_url)
+// ))
+
 module.exports = { createMeeting }

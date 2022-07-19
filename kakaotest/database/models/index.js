@@ -21,15 +21,15 @@ Trainer_api_list.init(sequelize);
 Reservation_list.associate(db);
 Trainer_api_list.associate(db);
 
-const reservation_list = Promise.resolve(Reservation_list.findAll({
-  attributes: [ 'name', 'phone', 'reservation_time', 'trainer', 'trainer_phone'],
-}))
+// const reservation_list = Promise.resolve(Reservation_list.findAll({
+//   attributes: [ 'name', 'phone', 'reservation_time', 'trainer', 'trainer_phone'],
+// }))
 
-console.log('---------------------------')
-reservation_list.then((data) => {
-  console.log(data[0].name)
-});  
-// Promise.resolve(value)
-console.log('---------------------------')
+// console.log('---------------------------')
+// reservation_list.then((data) => {
+//   console.log(data[0].name)
+// });  
+// // Promise.resolve(value)
+// console.log('---------------------------')
 
 module.exports = db;
