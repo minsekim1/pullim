@@ -1,11 +1,22 @@
-import React, { useState } from "react";
+import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
+import Peer from "simple-peer";
 import { Socket } from "socket.io-client";
 import ButtonGroup from "../components/ButtonGroup";
+import { SourcePlayback } from "../core/helpers/sourceHelper";
 import { PhotoType } from "../types/PrescriptionType";
 import CaptureList from "./CaptureList";
 import CheckTool from "./CheckTool";
 import DiagnosticHistory from "./DiagnosticHistory";
 import RecordAndPrescription from "./RecordAndPrescription";
+
+import {
+  BackgroundConfig,
+  backgroundImageUrls,
+} from "../core/helpers/backgroundHelper";
+import { PostProcessingConfig } from "../core/helpers/postProcessingHelper";
+import { SegmentationConfig } from "../core/helpers/segmentationHelper";
+import useBodyPix from "../core/hooks/useBodyPix";
+import useTFLite from "../core/hooks/useTFLite";
 
 interface TrainerPropsType {
   socketData: Socket;
@@ -22,10 +33,88 @@ function Trainer({ socketData, myId, meetingNumber }: TrainerPropsType) {
 
   const [isModal, setIsModal] = useState(false);
   const [src, setSrc] = useState("");
-
   const [currentPage, setCurrentPage] = useState("");
+
+  const [sourcePlayback, setSourcePlayback] = useState<SourcePlayback>();
+  const [callAccepted, setCallAccepted] = useState(false);
+  
+
+  const [backgroundConfig, setBackgroundConfig] = useState<BackgroundConfig>({
+    type: "image",
+    url: backgroundImageUrls[0],
+  });
+  const [segmentationConfig, setSegmentationConfig] =
+    useState<SegmentationConfig>({
+      model: "meet",
+      backend: "wasm",
+      inputResolution: "160x96",
+      pipeline: "webgl2",
+    });
+  const [postProcessingConfig, setPostProcessingConfig] =
+    useState<PostProcessingConfig>({
+      smoothSegmentationMask: true,
+      jointBilateralFilter: { sigmaSpace: 1, sigmaColor: 0.1 },
+      coverage: [0.5, 0.75],
+      lightWrapping: 0.3,
+      blendMode: "screen",
+    });
+  const bodyPix = useBodyPix();
+  const { tflite, isSIMDSupported } = useTFLite(segmentationConfig);
+
+
+  const userVideo = useRef() as React.LegacyRef<HTMLVideoElement> &
+    React.MutableRefObject<HTMLVideoElement>;
+  useEffect(() => {
+    socketData.on('hello', () =>{
+      if (socketData && myId !== "") {
+        const peer = new Peer({
+          initiator: true,
+          trickle: false,
+        });
+        peer.on("signal", (data) => {
+          console.log(data);
+          socketData.emit("caller", {
+            room_id: meetingNumber,
+            signalData: data,
+            from: myId,
+          });
+        });
+        socketData.on("acceptcall", (signal) => {
+          console.log('신호를 보내');
+          setCallAccepted(true);
+          peer.signal(signal);
+        });
+  
+        peer.on("stream", (stream) => {
+          console.log(stream);
+          userVideo.current.srcObject = stream;
+        });
+      }
+    })
+  }, [meetingNumber, myId, socketData]);
+
+  function handleVideoLoad(event: SyntheticEvent) {
+    const video = event.target as HTMLVideoElement
+    setSourcePlayback({
+      htmlElement: video,
+      width: video.videoWidth,
+      height: video.videoHeight,
+    })
+    console.log(video);
+  }
+
   return (
     <>
+      {callAccepted && (
+        <video
+          style={{ width: "400px", height: "400px" }}
+          playsInline
+          ref={userVideo}
+          autoPlay
+          muted
+          onLoadedData={handleVideoLoad}
+        />
+        )}
       <div
         id="pullim-page"
         style={{
@@ -64,11 +153,14 @@ function Trainer({ socketData, myId, meetingNumber }: TrainerPropsType) {
         )}
         {currentPage === "DiagnosticHistory" && <DiagnosticHistory />}
       </div>
-      {isCheckTool && (
+      {isCheckTool && sourcePlayback && bodyPix && tflite && (
         <CheckTool
-          socketData={socketData}
-          myId={myId}
-          meetingNumber={meetingNumber}
+        sourcePlayback={sourcePlayback}
+        backgroundConfig={backgroundConfig}
+        segmentationConfig={segmentationConfig}
+        postProcessingConfig={postProcessingConfig}
+        bodyPix={bodyPix}
+        tflite={tflite}
         />
       )}
       <ButtonGroup

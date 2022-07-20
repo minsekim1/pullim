@@ -132,7 +132,7 @@ function App() {
             name="drone"
             value="1"
             checked={isHost === "1"}
-            onClick={() => setIsHost("1")}
+            onChange={() => setIsHost("1")}
           />
           <label htmlFor="트레이너" style={{ padding: "0 0 0 4px" }}>
             트레이너(호스트)
@@ -144,7 +144,7 @@ function App() {
             name="drone"
             value="0"
             checked={isHost === "0"}
-            onClick={() => setIsHost("0")}
+            onChange={() => setIsHost("0")}
           />
           <label htmlFor="참가자" style={{ padding: "0 0 0 4px" }}>
             참가자

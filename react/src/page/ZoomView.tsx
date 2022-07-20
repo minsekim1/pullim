@@ -17,7 +17,6 @@ function ZoomView({
 }: ZoomViewPropsType) {
   const [socketData, setSocketData] = useState<Socket>();
   const [myId, setMyId] = useState("");
-  const [click, setClick] = useState(false);
   let websocket: Socket | undefined = undefined;
 
   useEffect(() => {
@@ -62,10 +61,11 @@ function ZoomView({
             myId={myId}
           />
         ) : (
-          <>
-            {click && <Client socketData={socketData}/>}
-            <button style={{position: "absolute", top: 0, zIndex: "99"}} onClick={() => setClick((prev) => !prev)}>버튼</button>
-          </>
+          <Client
+            socketData={socketData}
+            meetingNumber={meetingNumber}
+            myId={myId}
+          />
         ))}
     </>
   );

@@ -12,10 +12,12 @@ import VirtualPhoto from "../components/VirtualPhoto";
 // const SOCKET_URL = "http://localhost:5001";
 
 interface ClientPropsType {
-  socketData: Socket
+  socketData: Socket;
+  meetingNumber: string;
+  myId: string;
 }
 
-function Client({ socketData }: ClientPropsType) {
+function Client({ socketData, meetingNumber, myId }: ClientPropsType) {
 
   const [sourcePlayback, setSourcePlayback] = useState<SourcePlayback>();
   const [backgroundConfig, setBackgroundConfig] = useState<BackgroundConfig>({
@@ -59,13 +61,15 @@ function Client({ socketData }: ClientPropsType) {
         console.log(stream);
         myVideo.current.srcObject = stream;
       });
+    
+    socketData.emit("hello", {room_id: meetingNumber, from: myId});
 
-      socketData.on("caller", (data) => {
-        setReceivingCall(true);
-        setCaller(data.from);
-        setCallerSignal(data.signal);
-        console.log(data);
-      });
+    socketData.on("caller", (data) => {
+      setReceivingCall(true);
+      setCaller(data.from);
+      setCallerSignal(data.signal);
+      console.log(data);
+    });
   },[]);
 
   useEffect(() => {
@@ -127,15 +131,15 @@ function Client({ socketData }: ClientPropsType) {
         />
       </div>
       {sourcePlayback && tflite && bodyPix && (
-          <VirtualPhoto
-            sourcePlayback={sourcePlayback}
-            backgroundConfig={backgroundConfig}
-            segmentationConfig={segmentationConfig}
-            postProcessingConfig={postProcessingConfig}
-            bodyPix={bodyPix}
-            tflite={tflite}
-          />
-        )}
+        <VirtualPhoto
+          sourcePlayback={sourcePlayback}
+          backgroundConfig={backgroundConfig}
+          segmentationConfig={segmentationConfig}
+          postProcessingConfig={postProcessingConfig}
+          bodyPix={bodyPix}
+          tflite={tflite}
+        />
+      )}
     </div>
   );
 }

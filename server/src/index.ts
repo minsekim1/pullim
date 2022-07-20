@@ -34,8 +34,22 @@ io.on("connection", function (socket) {
     const room_id = JSON.parse(data).room_id;
     l("Join", "green", room_id + "," + socket.id);
     socket.join(`/${room_id}`);
-    
   });
+
+  socket.on("hello", (data) => {
+    const {room_id} =data;
+    const clients = io.sockets.adapter.rooms.get(`/${room_id}`);
+    let otherUser;
+    for(const user of clients){
+      if(user === socket.id)continue;
+      otherUser = user;
+    }
+    l("hello", "green", room_id + "," + socket.id);
+
+    io.to(otherUser).emit("hello",{
+      from: data.from,
+    })
+  })
 
   socket.on("caller", (data) => {
     const {room_id} =data;
