@@ -13,7 +13,8 @@ import { SourcePlayback } from "../core/helpers/sourceHelper";
 import useBodyPix from "../core/hooks/useBodyPix";
 import useTFLite from "../core/hooks/useTFLite";
 import { PhotoType } from "../types/PrescriptionType";
-const SOCKET_URL = "http://localhost:5002";
+// const SOCKET_URL = "https://pul-lim.com/server";
+const SOCKET_URL = "http://localhost:5001";
 
 interface CheckToolPropsType {
   checkedPhotoList: PhotoType[];
@@ -74,19 +75,20 @@ function CheckTool({
 
   let websocket: Socket | undefined = undefined;
   useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: false })
-      .then((stream) => {
-        setStream(stream);
-        console.log(stream);
-        myVideo.current.srcObject = stream;
-      });
-
+    // navigator.mediaDevices
+    //   .getUserMedia({ video: true, audio: false })
+    //   .then((stream) => {
+    //     setStream(stream);
+    //     console.log(stream);
+    //     myVideo.current.srcObject = stream;
+    //   });
     if (websocket === undefined) {
       websocket = io(SOCKET_URL, {
         path: "/socket.io", // 서버 path와 일치시켜준다
         transports: ["websocket"],
       });
+      console.log(SOCKET_URL);
+      console.log(websocket);
 
       websocket.on("connect", () => {
         console.info("connect!");
@@ -106,11 +108,10 @@ function CheckTool({
     }
   }, []);
   useEffect(() => {
-    if (socketData && stream) {
+    if (socketData && myId !== "") {
       const peer = new Peer({
         initiator: true,
         trickle: false,
-        stream: stream,
       });
 
       peer.on("signal", (data) => {
@@ -130,7 +131,7 @@ function CheckTool({
       });
       connection.current = peer;
     }
-  }, [meetingNumber, myId, socketData, stream]);
+  }, [meetingNumber, myId, socketData]);
 
   function handleVideoLoad(event: SyntheticEvent) {
     const video = event.target as HTMLVideoElement
