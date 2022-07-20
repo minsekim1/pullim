@@ -5,9 +5,17 @@ import CaptureListButton from "./CaptureListButton";
 import RecordAndPrescriptionButton from "./RecordAndPrescriptionButton";
 import usePage from "../hook/usePage";
 import DiagnosticHistoryButton from "./DiagnosticHistoryButton";
+import { PhotoType } from "../types/PrescriptionType";
+
+interface ButtonGroupPropsType {
+  setPhotoList: Function;
+  photoList: PhotoType[];
+  setCurrentPage: Function;
+  setCheckTool: Function;
+}
 
 function ButtonGroup(
-  { setPhotoList, photoList, setCurrentPage }: any = { Function, Array }
+  { setPhotoList, photoList, setCurrentPage , setCheckTool}: ButtonGroupPropsType
 ) {
   const onClickHandler = usePage(setCurrentPage);
   const Container = useRef<any>();
@@ -59,7 +67,7 @@ function ButtonGroup(
       >
         <CaptureListButton onClickHandler={onClickHandler} />
         <CaptureButton setPhotoList={setPhotoList} photoList={photoList} />
-        <CheckToolButton onClickHandler={onClickHandler} />
+        <CheckToolButton setCheckTool={setCheckTool} />
         <RecordAndPrescriptionButton onClickHandler={onClickHandler} />
         <DiagnosticHistoryButton onClickHandler={onClickHandler}/>
       </div>

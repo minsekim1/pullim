@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-function CheckToolButton({onClickHandler}: any) {
+function CheckToolButton({setCheckTool}: any) {
   return (
     <button style={{
       width: "100px",
@@ -11,7 +11,7 @@ function CheckToolButton({onClickHandler}: any) {
       fontSize: "11px",
       margin: "3px"
     }}
-    onClick={onClickHandler('CheckTool')}>
+    onClick={() =>setCheckTool((prev: any) => !prev)}>
       검사툴
     </button>
   )

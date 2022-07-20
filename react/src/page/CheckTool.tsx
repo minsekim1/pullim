@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useCallback, useEffect, useRef, useState } from "react";
+import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
 import { Socket, io } from "socket.io-client";
 import VirtualPhoto from "../components/VirtualPhoto";
 import Peer from "simple-peer";
@@ -12,24 +12,17 @@ import { SegmentationConfig } from "../core/helpers/segmentationHelper";
 import { SourcePlayback } from "../core/helpers/sourceHelper";
 import useBodyPix from "../core/hooks/useBodyPix";
 import useTFLite from "../core/hooks/useTFLite";
-import { PhotoType } from "../types/PrescriptionType";
-// const SOCKET_URL = "https://pul-lim.com/server";
-const SOCKET_URL = "http://localhost:5001";
 
 interface CheckToolPropsType {
-  checkedPhotoList: PhotoType[];
-  setCheckedPhotoList: Function;
-  isHost: string;
-  userName: string;
   meetingNumber: string;
+  socketData: Socket;
+  myId: string;
 }
 
 function CheckTool({
-  checkedPhotoList,
-  setCheckedPhotoList,
-  isHost,
-  userName,
   meetingNumber,
+  socketData,
+  myId
 }: CheckToolPropsType) {
   const [sourcePlayback, setSourcePlayback] = useState<SourcePlayback>();
   const [backgroundConfig, setBackgroundConfig] = useState<BackgroundConfig>({
@@ -53,61 +46,22 @@ function CheckTool({
     });
   const bodyPix = useBodyPix();
   const { tflite, isSIMDSupported } = useTFLite(segmentationConfig);
-  const [isClick, setIsClick] = useState<Boolean>(false);
-  const [socketData, setSocketData] = useState<Socket>();
 
-  const [stream, setStream] = useState<MediaStream>();
-  const [myId, setMyId] = useState("");
+  // const [socketData, setSocketData] = useState<Socket>();
+
   const [callAccepted, setCallAccepted] = useState(false);
 
-  const [caller, setCaller] = useState("");
-  const [receivingCall, setReceivingCall] = useState(false);
-  const [callerSignal, setCallerSignal] = useState<Peer.SignalData | string>(
-    ""
-  );
-  const [isLoading, setLoading] = useState(false);
   const userVideo = useRef() as React.LegacyRef<HTMLVideoElement> &
     React.MutableRefObject<HTMLVideoElement>;
   const connection = useRef<Peer.Instance>();
 
-  let websocket: Socket | undefined = undefined;
-
   useEffect(() => {
-    if (websocket === undefined) {
-      websocket = io(SOCKET_URL, {
-        path: "/socket.io", // 서버 path와 일치시켜준다
-        transports: ["websocket"],
-      });
-      console.log(SOCKET_URL);
-      console.log(websocket);
-
-      websocket.on("connect", () => {
-        console.info("connect!");
-        if (websocket !== undefined)
-          websocket.emit(
-            "join",
-            JSON.stringify({ room_id: meetingNumber, isHost, userName })
-          );
-      });
-
-      websocket.on("getid", (id) => {
-        setMyId(id);
-      });
-      setSocketData(websocket);
-    }
-    return () => {
-      if(websocket){
-        console.log('닫힘!');
-        websocket.disconnect();
-      }
-    }
-  }, []);
-  useEffect(() => {
+    const peer = new Peer({
+      initiator: true,
+      trickle: false,
+    });
     if (socketData && myId !== "") {
-      const peer = new Peer({
-        initiator: true,
-        trickle: false,
-      });
+      console.log('peer 몇번?');
 
       peer.on("signal", (data) => {
         console.log(data);
@@ -117,20 +71,19 @@ function CheckTool({
           from: myId,
         });
       });
+      socketData.on("acceptcall", (signal) => {
+        console.log('신호를 보내');
+        setCallAccepted(true);
+        peer.signal(signal);
+      });
+
       peer.on("stream", (stream) => {
         console.log(stream);
         userVideo.current.srcObject = stream;
       });
-      socketData.on("acceptcall", (signal) => {
-        setCallAccepted(true);
-        peer.signal(signal);
-      });
-      socketData.on('disconnect', () => {
-        peer.destroy();
-      })
+      
       connection.current = peer;
     }
-
   }, [meetingNumber, myId, socketData]);
 
   function handleVideoLoad(event: SyntheticEvent) {
@@ -140,63 +93,33 @@ function CheckTool({
       width: video.videoWidth,
       height: video.videoHeight,
     })
-    setLoading(false)
     console.log(video);
   }
 
-  const clickCheck = () => {
-    setIsClick(true);
-  };
-
   return (
-    <>
-      <h4 style={{ color: "black" }}>검사툴</h4>
       <div
         style={{
-          width: "90%",
-          padding: "10px",
-          height: "90vh",
+          zIndex: "99",
+          position: "absolute",
+          top: 0,
+          width: "100%",
+          height: "100%",
+          background: "black",
           display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          overflowY: "auto",
+          justifyContent: "center",
+          alignItems: "center"
         }}
       >
-        <button onClick={clickCheck}>캡처하기</button>
-        <button>비디오</button>
         {callAccepted && (
-          <div style={{ width: "300px", height: "300px" }}>
-            {isLoading && <progress></progress>}
-            <video
-              style={{ width: "100%", height: "100%", visibility: "hidden", position: "absolute" }}
-              playsInline
-              ref={userVideo}
-              autoPlay
-              muted
-              onLoadedData={handleVideoLoad}
-            />
-          </div>
+          <video
+            style={{ width: "0%", height: "0%" }}
+            playsInline
+            ref={userVideo}
+            autoPlay
+            muted
+            onLoadedData={handleVideoLoad}
+          />
         )}
-        <div id="image-container">
-          {checkedPhotoList.length !== 0 &&
-            checkedPhotoList.map((checkedPhoto, i) => (
-              <div
-                key={i}
-                style={{
-                  width: "100%",
-                  height: "250px",
-                  marginBottom: "10px",
-                  position: "relative",
-                }}
-              >
-                <img
-                  style={{ width: "100%", height: "100%" }}
-                  src={checkedPhoto.image}
-                  alt={`그리드배경이 들어간 사진 ${i}`}
-                />
-              </div>
-            ))}
-        </div>
         {sourcePlayback && tflite && bodyPix && (
           <VirtualPhoto
             sourcePlayback={sourcePlayback}
@@ -208,7 +131,6 @@ function CheckTool({
           />
         )}
       </div>
-    </>
   );
 }
 

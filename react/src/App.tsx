@@ -2,13 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import "./App.css";
 import { initArgs, ZoomMtg } from "@zoomus/websdk";
-import CaptureList from "./page/CaptureList";
-import ButtonGroup from "./components/ButtonGroup";
-import RecordAndPrescription from "./page/RecordAndPrescription";
-import CheckTool from "./page/CheckTool";
-import DiagnosticHistory from "./page/DiagnosticHistory";
-import { PhotoType, FileType } from "./types/PrescriptionType";
-import Client from "./page/Client";
+import ZoomView from "./page/ZoomView";
 
 ZoomMtg.setZoomJSLib("https://source.zoom.us/2.4.5/lib", "/av");
 
@@ -17,8 +11,6 @@ ZoomMtg.prepareWebSDK();
 // loads language files, also passes any error messages to the ui
 ZoomMtg.i18n.load("ko-KO");
 ZoomMtg.i18n.reload("ko-KO");
-//ZoomMtg.i18n.load("en-US");
-//ZoomMtg.i18n.reload("en-US");
 
 function App() {
   const [url, setUrl] = useState(
@@ -28,23 +20,13 @@ function App() {
   const [isEnter, setIsEnter] = useState(false);
   const [isHost, setIsHost] = useState("1");
 
-  const [memo, setMemo] = useState<string>("");
-  const [photoList, setPhotoList] = useState<PhotoType[]>([]);
-  const [checkedPhotoList, setCheckedPhotoList] = useState<PhotoType[]>([]);
-  const [uploadedPhotoList, setUploadedPhotoList] = useState<PhotoType[]>([]);
-  const [videoList, setVideoList] = useState<PhotoType[]>([]);
-
-  const [isModal, setIsModal] = useState(false);
-  const [src, setSrc] = useState("");
-
-  const [currentPage, setCurrentPage] = useState("");
-
   useEffect(() => {
     if (document) {
       const url = document.location.href.split("?url=")[1];
       if (url) setUrl(url);
     }
   }, []);
+
 
   const sdkKey = "xPN1ctkMLTAqaWGsE7FDSonJSEOO8B0XtQf8";
   const meetingNumber = url.slice(
@@ -176,101 +158,7 @@ function App() {
         <br />
         <button onClick={getSignature}>Join Meeting</button>
       </main>
-      {isHost === "0" && isEnter && (
-        <div
-          style={{
-            width: "400px",
-            position: "absolute",
-            top: 0,
-            zIndex: 1,
-            right: 0,
-          }}
-        >
-          <Client
-            meetingNumber={meetingNumber}
-            isHost={isHost}
-            userName={userName}
-          />
-        </div>
-      )}
-      {isHost === "1" && isEnter && (
-        <>
-          <div
-            id="pullim-page"
-            style={{
-              width: "400px",
-              position: "absolute",
-              top: 0,
-              zIndex: 1,
-              right: 0,
-              display: "none",
-              height: "100vh",
-              backgroundColor: "rgba(255,255,255)",
-              flexDirection: "column",
-              alignItems: "center",
-              borderRadius: "1% 0 0 1%",
-              overflow: "hidden",
-              // wordWrap: "break-word",
-            }}
-          >
-            {currentPage === "CaptureList" && (
-              <CaptureList
-                photoList={photoList}
-                setPhotoList={setPhotoList}
-                setIsModal={setIsModal}
-                setSrc={setSrc}
-              />
-            )}
-            {currentPage === "RecordAndPrescription" && (
-              <RecordAndPrescription
-                photoList={photoList}
-                uploadedPhotoList={uploadedPhotoList}
-                setUploadedPhotoList={setUploadedPhotoList}
-                videoList={videoList}
-                setVideoList={setVideoList}
-                memo={memo}
-                setMemo={setMemo}
-              />
-            )}
-            {currentPage === "CheckTool" && (
-              <CheckTool
-                checkedPhotoList={checkedPhotoList}
-                setCheckedPhotoList={setCheckedPhotoList}
-                isHost={isHost}
-                userName={userName}
-                meetingNumber={meetingNumber}
-              />
-            )}
-            {currentPage === "DiagnosticHistory" && <DiagnosticHistory />}
-          </div>
-          <ButtonGroup
-            setPhotoList={setPhotoList}
-            photoList={photoList}
-            setCurrentPage={setCurrentPage}
-          />
-          {isModal && (
-            <div
-              style={{
-                zIndex: 1,
-                position: "absolute",
-                width: "1100px",
-                top: "10%",
-                left: "10%",
-                border: "2.5px solid orange",
-              }}
-            >
-              <img
-                style={{ width: "100%" }}
-                onClick={() => {
-                  setIsModal(false);
-                }}
-                src={src}
-                alt="큰 이미지"
-              />
-            </div>
-          )}
-        </>
-      )}
+      { isEnter && <ZoomView isHost={isHost} meetingNumber={meetingNumber} userName={userName}/>}
     </div>
   );
 }

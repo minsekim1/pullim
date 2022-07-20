@@ -9,15 +9,13 @@ import useBodyPix from "../core/hooks/useBodyPix";
 import useTFLite from "../core/hooks/useTFLite";
 import VirtualPhoto from "../components/VirtualPhoto";
 // const SOCKET_URL = "https://pul-lim.com/server";
-const SOCKET_URL = "http://localhost:5001";
+// const SOCKET_URL = "http://localhost:5001";
 
 interface ClientPropsType {
-  meetingNumber: string;
-  isHost: string;
-  userName: string;
+  socketData: Socket
 }
 
-function Client({ meetingNumber, isHost, userName }: ClientPropsType) {
+function Client({ socketData }: ClientPropsType) {
 
   const [sourcePlayback, setSourcePlayback] = useState<SourcePlayback>();
   const [backgroundConfig, setBackgroundConfig] = useState<BackgroundConfig>({
@@ -42,21 +40,16 @@ function Client({ meetingNumber, isHost, userName }: ClientPropsType) {
   const bodyPix = useBodyPix();
   const { tflite, isSIMDSupported } = useTFLite(segmentationConfig);
 
-  const [myId, setMyId] = useState("");
   const [stream, setStream] = useState<MediaStream>();
-  const [socketData, setSocketData] = useState<Socket>();
 
   const [caller, setCaller] = useState("");
   const [receivingCall, setReceivingCall] = useState(false);
   const [callerSignal, setCallerSignal] = useState<Peer.SignalData | string>(
     ""
   );
-  const [isLoading, setLoading] = useState(false);
   const myVideo = useRef() as React.LegacyRef<HTMLVideoElement> &
     React.MutableRefObject<HTMLVideoElement>;
   const connection = useRef<Peer.Instance>();
-
-  let websocket: Socket | undefined = undefined;
 
   useEffect(() => {
     navigator.mediaDevices
@@ -66,48 +59,40 @@ function Client({ meetingNumber, isHost, userName }: ClientPropsType) {
         console.log(stream);
         myVideo.current.srcObject = stream;
       });
-    if (websocket === undefined) {
-      websocket = io(SOCKET_URL, {
-        path: "/socket.io", // 서버 path와 일치시켜준다
-        transports: ["websocket"],
-      });
 
-      websocket.on("connect", () => {
-        console.info("connect!");
-        if (websocket !== undefined)
-          websocket.emit(
-            "join",
-            JSON.stringify({ room_id: meetingNumber, isHost, userName })
-          );
-      });
-
-      websocket.on("getid", (id) => {
-        setMyId(id);
-      });
-
-      websocket.on("disconnect", () => console.info("disconnect!"));
-
-      websocket.on("caller", (data) => {
+      socketData.on("caller", (data) => {
         setReceivingCall(true);
         setCaller(data.from);
         setCallerSignal(data.signal);
         console.log(data);
       });
-      setSocketData(websocket);
-    }
-  }, []);
+  },[]);
 
   useEffect(() => {
-    if (receivingCall && caller && callerSignal && socketData) {
+    if (receivingCall && caller!=='' && callerSignal!=='' && socketData) {
       const peer = new Peer({
         initiator: false,
         trickle: false,
         stream: stream,
       });
+      
       peer.on("signal", (data) => {
+        console.log(peer);
         socketData.emit("answerCall", { signal: data, to: caller });
       });
+      
       peer.signal(callerSignal);
+
+      // socketData.on('peer_close', () => {
+      //   console.log('peer 폭발');
+      //   if(connection.current){
+      //     connection.current.destroy();
+      //     setReceivingCall(true);
+      //     setCaller('');
+      //     setCallerSignal('');
+      //   }
+      // })
+      
       connection.current = peer;
     }
   }, [caller, callerSignal, receivingCall, socketData, stream]);
@@ -119,15 +104,19 @@ function Client({ meetingNumber, isHost, userName }: ClientPropsType) {
       width: video.videoWidth,
       height: video.videoHeight,
     })
-    setLoading(false)
     console.log(video);
   }
 
 
   return (
-    <div>
+    <div style={{
+      width: "400px",
+      position: "absolute",
+      top: 0,
+      zIndex: 1,
+      right: 0,
+    }}>
       <div style={{ width: "100%", height: "100%"}}>
-        {isLoading && <progress></progress>}
         <video
           ref={myVideo}
           style={{ width: "100%", height: "100%", visibility: "hidden", position: "absolute"}}

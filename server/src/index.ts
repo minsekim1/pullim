@@ -38,7 +38,6 @@ io.on("connection", function (socket) {
   });
 
   socket.on("caller", (data) => {
-    console.log("됐다");
     const {room_id} =data;
     const clients = io.sockets.adapter.rooms.get(`/${room_id}`);
     let otherUser;
@@ -50,7 +49,7 @@ io.on("connection", function (socket) {
 
     io.to(otherUser).emit("caller",{
       signal: data.signalData,
-      from: data.from
+      from: data.from,
     })
   });
 
@@ -63,6 +62,19 @@ io.on("connection", function (socket) {
     io.to(data.to).emit("acceptcall", data.signal);
   });
 
+  // socket.on('peer_close', (data) => {
+  //   console.log('불러져라');
+  //   const {room_id, from} =data;
+  //   const clients = io.sockets.adapter.rooms.get(`/${room_id}`);
+  //   let otherUser;
+  //   for(const user of clients){
+  //     if(user === socket.id)continue;
+  //     otherUser = user
+  //   }
+  //   io.to(otherUser).emit("peer_close", {
+  //     room_id, from
+  //   });
+  // })
 });
 
 app.use(express.json());
