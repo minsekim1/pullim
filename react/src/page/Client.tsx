@@ -1,5 +1,5 @@
 import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
-import { Socket, io } from "socket.io-client";
+import { Socket} from "socket.io-client";
 import Peer from "simple-peer";
 import { SourcePlayback } from "../core/helpers/sourceHelper";
 import { BackgroundConfig, backgroundImageUrls } from "../core/helpers/backgroundHelper";
@@ -19,7 +19,7 @@ interface ClientPropsType {
 
 function Client({ socketData, meetingNumber, myId }: ClientPropsType) {
 
-  const [sourcePlayback, setSourcePlayback] = useState<SourcePlayback>();
+  const [sourcePlayback, setSourcePlayback] = useState<SourcePlayback|null>();
   const [backgroundConfig, setBackgroundConfig] = useState<BackgroundConfig>({
     type: "image",
     url: backgroundImageUrls[0],
@@ -81,66 +81,78 @@ function Client({ socketData, meetingNumber, myId }: ClientPropsType) {
       });
       
       peer.on("signal", (data) => {
-        console.log(peer);
         socketData.emit("answerCall", { signal: data, to: caller });
       });
       
       peer.signal(callerSignal);
-
-      // socketData.on('peer_close', () => {
-      //   console.log('peer 폭발');
-      //   if(connection.current){
-      //     connection.current.destroy();
-      //     setReceivingCall(true);
-      //     setCaller('');
-      //     setCallerSignal('');
-      //   }
-      // })
-      
-      connection.current = peer;
+      // connection.current = peer;
     }
-  }, [caller, callerSignal, receivingCall, socketData, stream]);
+  }, [caller, callerSignal, meetingNumber, myId, receivingCall, socketData, stream]);
 
-  function handleVideoLoad(event: SyntheticEvent) {
-    const video = event.target as HTMLVideoElement
-    setSourcePlayback({
-      htmlElement: video,
-      width: video.videoWidth,
-      height: video.videoHeight,
-    })
-    console.log(video);
-  }
-
+  useEffect(() => {
+    socketData.on('startcheck', () => {
+      const userRes = window.confirm("지금부터 검사를 시작하겠습니다.");
+      if(userRes){
+        socketData.emit('startok', {
+          room_id: meetingNumber,
+          from: myId,
+        });
+        const video = myVideo.current;
+        setSourcePlayback({
+          htmlElement: video,
+          width: video.videoWidth,
+          height: video.videoHeight,
+        });
+      }
+    });
+    socketData.on('endcheck', () => {
+      window.alert('검사가 종료되었습니다.');
+      setSourcePlayback(null);
+    });
+  },[])
 
   return (
-    <div style={{
-      width: "400px",
-      position: "absolute",
-      top: 0,
-      zIndex: 1,
-      right: 0,
-    }}>
-      <div style={{ width: "100%", height: "100%"}}>
-        <video
-          ref={myVideo}
-          style={{ width: "100%", height: "100%", visibility: "hidden", position: "absolute"}}
-          playsInline
-          autoPlay
-          muted
-          onLoadedData={handleVideoLoad}
-        />
+    <>
+      <div style={{
+        width: "400px",
+        position: "absolute",
+        top: 0,
+        zIndex: 1,
+        right: 0,
+      }}>
+        <div style={{ width: "100%", height: "100%"}}>
+          <video
+            ref={myVideo}
+            style={{ width: "100%", height: "100%", visibility: "hidden", position: "absolute"}}
+            playsInline
+            autoPlay
+            muted
+          />
+        </div>
       </div>
-      {sourcePlayback && tflite && bodyPix && (
-        <VirtualPhoto
-          sourcePlayback={sourcePlayback}
-          backgroundConfig={backgroundConfig}
-          segmentationConfig={segmentationConfig}
-          postProcessingConfig={postProcessingConfig}
-          bodyPix={bodyPix}
-          tflite={tflite}
-        />
-      )}
-    </div>
+        {sourcePlayback && tflite && bodyPix && (
+          <div style={{
+            zIndex: "99",
+            position: "absolute",
+            top: 0,
+            width: "100%",
+            height: "100%",
+            background: "black",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}>
+            <VirtualPhoto
+              sourcePlayback={sourcePlayback}
+              backgroundConfig={backgroundConfig}
+              segmentationConfig={segmentationConfig}
+              postProcessingConfig={postProcessingConfig}
+              bodyPix={bodyPix}
+              tflite={tflite}
+            />
+          </div>
+        )}
+    </>
   );
 }
 

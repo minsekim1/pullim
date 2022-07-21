@@ -1,5 +1,5 @@
 import { BodyPix } from "@tensorflow-models/body-pix";
-import React, { useState } from "react";
+import React, { MouseEventHandler, useState } from "react";
 import VirtualPhoto from "../components/VirtualPhoto";
 
 import {
@@ -17,6 +17,7 @@ interface CheckToolPropsType {
   postProcessingConfig: PostProcessingConfig;
   bodyPix: BodyPix;
   tflite: TFLite;
+  endCheck:MouseEventHandler<HTMLButtonElement>;
 }
 
 function CheckTool({
@@ -25,7 +26,8 @@ function CheckTool({
   segmentationConfig,
   bodyPix,
   tflite,
-  postProcessingConfig
+  postProcessingConfig,
+  endCheck
 }: CheckToolPropsType) {
 
   return (
@@ -52,6 +54,7 @@ function CheckTool({
           tflite={tflite}
         />
       )}
+      <button style={{position: "absolute", top: 0}} onClick={endCheck}>검사 종료</button>
     </div>
   );
 }

@@ -35,7 +35,7 @@ io.on("connection", function (socket) {
     l("Join", "green", room_id + "," + socket.id);
     socket.join(`/${room_id}`);
   });
-
+  // 호스트에게 WebRTC를 하게끔 도와주는 참여자의 요청
   socket.on("hello", (data) => {
     const {room_id} =data;
     const clients = io.sockets.adapter.rooms.get(`/${room_id}`);
@@ -50,7 +50,7 @@ io.on("connection", function (socket) {
       from: data.from,
     })
   })
-
+  // 호스트가 WebRtc 시작하고자 하는 호스트의 요청
   socket.on("caller", (data) => {
     const {room_id} =data;
     const clients = io.sockets.adapter.rooms.get(`/${room_id}`);
@@ -66,6 +66,51 @@ io.on("connection", function (socket) {
       from: data.from,
     })
   });
+  //검사 시작에 대한 요청 통신
+  socket.on("startcheck", (data) => {
+    const {room_id} =data;
+    const clients = io.sockets.adapter.rooms.get(`/${room_id}`);
+    let otherUser;
+    for(const user of clients){
+      if(user === socket.id)continue;
+      otherUser = user;
+    }
+    l("startcheck", "green", room_id + "," + socket.id);
+
+    io.to(otherUser).emit("startcheck",{
+      from: data.from,
+    });
+  });
+  // 검사 시작에 대한 응답 통신
+  socket.on("startok", (data) => {
+    const {room_id} =data;
+    const clients = io.sockets.adapter.rooms.get(`/${room_id}`);
+    let otherUser;
+    for(const user of clients){
+      if(user === socket.id)continue;
+      otherUser = user;
+    }
+    l("startok", "green", room_id + "," + socket.id);
+
+    io.to(otherUser).emit("startok",{
+      from: data.from,
+    });
+  });
+
+  socket.on("endcheck", (data) => {
+    const {room_id} =data;
+    const clients = io.sockets.adapter.rooms.get(`/${room_id}`);
+    let otherUser;
+    for(const user of clients){
+      if(user === socket.id)continue;
+      otherUser = user;
+    }
+    l("endcheck", "green", room_id + "," + socket.id);
+
+    io.to(otherUser).emit("endcheck",{
+      from: data.from,
+    });
+  })
 
   // 연결해제
   socket.on("disconnect", () => {
@@ -75,20 +120,6 @@ io.on("connection", function (socket) {
   socket.on("answerCall", (data) => {
     io.to(data.to).emit("acceptcall", data.signal);
   });
-
-  // socket.on('peer_close', (data) => {
-  //   console.log('불러져라');
-  //   const {room_id, from} =data;
-  //   const clients = io.sockets.adapter.rooms.get(`/${room_id}`);
-  //   let otherUser;
-  //   for(const user of clients){
-  //     if(user === socket.id)continue;
-  //     otherUser = user
-  //   }
-  //   io.to(otherUser).emit("peer_close", {
-  //     room_id, from
-  //   });
-  // })
 });
 
 app.use(express.json());

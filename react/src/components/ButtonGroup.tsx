@@ -12,10 +12,11 @@ interface ButtonGroupPropsType {
   photoList: PhotoType[];
   setCurrentPage: Function;
   setCheckTool: Function;
+  callAccepted: boolean;
 }
 
 function ButtonGroup(
-  { setPhotoList, photoList, setCurrentPage , setCheckTool}: ButtonGroupPropsType
+  { setPhotoList, photoList, setCurrentPage , setCheckTool, callAccepted}: ButtonGroupPropsType
 ) {
   const onClickHandler = usePage(setCurrentPage);
   const Container = useRef<any>();
@@ -67,9 +68,9 @@ function ButtonGroup(
       >
         <CaptureListButton onClickHandler={onClickHandler} />
         <CaptureButton setPhotoList={setPhotoList} photoList={photoList} />
-        <CheckToolButton setCheckTool={setCheckTool} />
         <RecordAndPrescriptionButton onClickHandler={onClickHandler} />
         <DiagnosticHistoryButton onClickHandler={onClickHandler}/>
+        <CheckToolButton setCheckTool={setCheckTool} callAccepted={callAccepted}/>
       </div>
     </div>
   );

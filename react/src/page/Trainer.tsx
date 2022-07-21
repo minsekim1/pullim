@@ -30,14 +30,14 @@ function Trainer({ socketData, myId, meetingNumber }: TrainerPropsType) {
   const [uploadedPhotoList, setUploadedPhotoList] = useState<PhotoType[]>([]);
   const [videoList, setVideoList] = useState<PhotoType[]>([]);
   const [isCheckTool, setCheckTool] = useState(false);
+  const [end, setEnd] = useState(false);
 
   const [isModal, setIsModal] = useState(false);
   const [src, setSrc] = useState("");
   const [currentPage, setCurrentPage] = useState("");
 
-  const [sourcePlayback, setSourcePlayback] = useState<SourcePlayback>();
+  const [sourcePlayback, setSourcePlayback] = useState<SourcePlayback|null>();
   const [callAccepted, setCallAccepted] = useState(false);
-  
 
   const [backgroundConfig, setBackgroundConfig] = useState<BackgroundConfig>({
     type: "image",
@@ -64,6 +64,8 @@ function Trainer({ socketData, myId, meetingNumber }: TrainerPropsType) {
 
   const userVideo = useRef() as React.LegacyRef<HTMLVideoElement> &
     React.MutableRefObject<HTMLVideoElement>;
+  const connection = useRef<Peer.Instance>();
+  
   useEffect(() => {
     socketData.on('hello', () =>{
       if (socketData && myId !== "") {
@@ -81,8 +83,9 @@ function Trainer({ socketData, myId, meetingNumber }: TrainerPropsType) {
         });
         socketData.on("acceptcall", (signal) => {
           console.log('신호를 보내');
-          setCallAccepted(true);
           peer.signal(signal);
+          // connection.current = peer;
+          setCallAccepted(true);
         });
   
         peer.on("stream", (stream) => {
@@ -91,16 +94,38 @@ function Trainer({ socketData, myId, meetingNumber }: TrainerPropsType) {
         });
       }
     })
+    
   }, [meetingNumber, myId, socketData]);
 
-  function handleVideoLoad(event: SyntheticEvent) {
-    const video = event.target as HTMLVideoElement
-    setSourcePlayback({
-      htmlElement: video,
-      width: video.videoWidth,
-      height: video.videoHeight,
-    })
-    console.log(video);
+  useEffect(() => {
+    console.log(isCheckTool);
+    if(isCheckTool){
+      socketData.emit('startcheck', {
+        room_id: meetingNumber,
+        from: myId,
+      });
+      socketData.on('startok', () => {
+        const video = userVideo.current;
+        setSourcePlayback({
+          htmlElement: video,
+          width: video.videoWidth,
+          height: video.videoHeight,
+        });
+      });
+    }
+    if(end){
+      socketData.emit('endcheck', {
+        room_id: meetingNumber,
+        from: myId,
+      });
+      setSourcePlayback(null);
+      setEnd(false);
+    }
+  },[isCheckTool, meetingNumber, myId, socketData, end]);
+
+  const endCheck = () => {
+    setCheckTool(false);
+    setEnd(true);
   }
 
   return (
@@ -112,7 +137,6 @@ function Trainer({ socketData, myId, meetingNumber }: TrainerPropsType) {
           ref={userVideo}
           autoPlay
           muted
-          onLoadedData={handleVideoLoad}
         />
         )}
       <div
@@ -161,6 +185,7 @@ function Trainer({ socketData, myId, meetingNumber }: TrainerPropsType) {
         postProcessingConfig={postProcessingConfig}
         bodyPix={bodyPix}
         tflite={tflite}
+        endCheck={endCheck}
         />
       )}
       <ButtonGroup
@@ -168,6 +193,7 @@ function Trainer({ socketData, myId, meetingNumber }: TrainerPropsType) {
         photoList={photoList}
         setCurrentPage={setCurrentPage}
         setCheckTool={setCheckTool}
+        callAccepted={callAccepted}
       />
       {isModal && (
         <div
