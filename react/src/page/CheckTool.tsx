@@ -54,7 +54,7 @@ function CheckTool({
           tflite={tflite}
         />
       )}
-      <button style={{position: "absolute", top: 0}} onClick={endCheck}>검사 종료</button>
+      <button style={{position: "absolute", top: 10, left: 10, color: "white", background: "red", padding: "5px", borderRadius: "10px"}} onClick={endCheck}>검사 종료</button>
     </div>
   );
 }

@@ -66,6 +66,10 @@ io.on("connection", function (socket) {
       from: data.from,
     })
   });
+  socket.on("answerCall", (data) => {
+    io.to(data.to).emit("acceptcall", data.signal);
+  });
+
   //검사 시작에 대한 요청 통신
   socket.on("startcheck", (data) => {
     const {room_id} =data;
@@ -117,9 +121,6 @@ io.on("connection", function (socket) {
     l("Disconnect", "blue", socket.id);
   });
 
-  socket.on("answerCall", (data) => {
-    io.to(data.to).emit("acceptcall", data.signal);
-  });
 });
 
 app.use(express.json());

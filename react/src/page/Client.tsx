@@ -43,15 +43,15 @@ function Client({ socketData, meetingNumber, myId }: ClientPropsType) {
   const { tflite, isSIMDSupported } = useTFLite(segmentationConfig);
 
   const [stream, setStream] = useState<MediaStream>();
-
   const [caller, setCaller] = useState("");
   const [receivingCall, setReceivingCall] = useState(false);
   const [callerSignal, setCallerSignal] = useState<Peer.SignalData | string>(
     ""
   );
+  const [isChecking, setChecking] = useState(false);
+
   const myVideo = useRef() as React.LegacyRef<HTMLVideoElement> &
     React.MutableRefObject<HTMLVideoElement>;
-  const connection = useRef<Peer.Instance>();
 
   useEffect(() => {
     navigator.mediaDevices
@@ -83,8 +83,8 @@ function Client({ socketData, meetingNumber, myId }: ClientPropsType) {
       peer.on("signal", (data) => {
         socketData.emit("answerCall", { signal: data, to: caller });
       });
-      
       peer.signal(callerSignal);
+      
       // connection.current = peer;
     }
   }, [caller, callerSignal, meetingNumber, myId, receivingCall, socketData, stream]);
@@ -103,16 +103,28 @@ function Client({ socketData, meetingNumber, myId }: ClientPropsType) {
           width: video.videoWidth,
           height: video.videoHeight,
         });
+        setChecking(true);
       }
     });
     socketData.on('endcheck', () => {
       window.alert('검사가 종료되었습니다.');
+      setChecking(false);
       setSourcePlayback(null);
     });
-  },[])
+  },[]);
 
   return (
     <>
+      { isChecking &&
+        <header style={{
+          fontWeight: "bold",
+          zIndex: "100",
+          color: "white",
+          position: "absolute",
+          top: 10,
+          left: 10
+        }}>🔴 검사 중</header>
+      }
       <div style={{
         width: "400px",
         position: "absolute",

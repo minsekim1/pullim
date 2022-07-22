@@ -64,7 +64,6 @@ function Trainer({ socketData, myId, meetingNumber }: TrainerPropsType) {
 
   const userVideo = useRef() as React.LegacyRef<HTMLVideoElement> &
     React.MutableRefObject<HTMLVideoElement>;
-  const connection = useRef<Peer.Instance>();
   
   useEffect(() => {
     socketData.on('hello', () =>{
@@ -145,7 +144,7 @@ function Trainer({ socketData, myId, meetingNumber }: TrainerPropsType) {
           width: "400px",
           position: "absolute",
           top: 0,
-          zIndex: 1,
+          zIndex: 100,
           right: 0,
           display: "none",
           height: "100vh",
