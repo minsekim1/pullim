@@ -178,13 +178,13 @@ function Trainer({ socketData, myId, meetingNumber }: TrainerPropsType) {
       </div>
       {isCheckTool && sourcePlayback && bodyPix && tflite && (
         <CheckTool
-        sourcePlayback={sourcePlayback}
-        backgroundConfig={backgroundConfig}
-        segmentationConfig={segmentationConfig}
-        postProcessingConfig={postProcessingConfig}
-        bodyPix={bodyPix}
-        tflite={tflite}
-        endCheck={endCheck}
+          sourcePlayback={sourcePlayback}
+          backgroundConfig={backgroundConfig}
+          segmentationConfig={segmentationConfig}
+          postProcessingConfig={postProcessingConfig}
+          bodyPix={bodyPix}
+          tflite={tflite}
+          endCheck={endCheck}
         />
       )}
       <ButtonGroup

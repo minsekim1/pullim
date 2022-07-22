@@ -1,5 +1,5 @@
 import { BodyPix } from "@tensorflow-models/body-pix";
-import React, { MouseEventHandler, useState } from "react";
+import React, { MouseEventHandler } from "react";
 import VirtualPhoto from "../components/VirtualPhoto";
 
 import {

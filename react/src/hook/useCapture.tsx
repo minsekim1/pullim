@@ -27,7 +27,7 @@ function useCapture(setPhotoList: Function, photoList: PhotoType[], elObject: El
     }
     const canvasRef = tempRef
     vedioRef.current = canvasRef as any;
-    console.log(vedioRef.current);
+    console.log(1);
     //클릭 완료!
     setIsClick(true);
   };
@@ -54,6 +54,7 @@ function useCapture(setPhotoList: Function, photoList: PhotoType[], elObject: El
   useEffect(() => {
     if (isClick) {
       takeScreenshot();
+      console.log(2);
     }
   }, [isClick, takeScreenshot]);
 
@@ -62,6 +63,7 @@ function useCapture(setPhotoList: Function, photoList: PhotoType[], elObject: El
     if (isClick && image) {
       setImage(image);
       setIsClick(false);
+      console.log(3);
     }
   }, [isClick, image, setImage]);
 
