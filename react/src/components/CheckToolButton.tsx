@@ -1,6 +1,22 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 
-function CheckToolButton({onClickHandler}: any) {
+function CheckToolButton({setCheckTool, callAccepted}: any) {
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if(!buttonRef.current){
+      return;
+    }
+    if(!callAccepted){
+      buttonRef.current.style.background = "#255c8c";
+      console.log('black');
+    }else{
+      buttonRef.current.style.background = "royalblue";
+      console.log('royalblue');
+    }
+
+  },[callAccepted]);
+
   return (
     <button style={{
       width: "100px",
@@ -11,7 +27,9 @@ function CheckToolButton({onClickHandler}: any) {
       fontSize: "11px",
       margin: "3px"
     }}
-    onClick={onClickHandler('CheckTool')}>
+    ref={buttonRef}
+    disabled={!callAccepted}
+    onClick={() =>setCheckTool(true)}>
       검사툴
     </button>
   )

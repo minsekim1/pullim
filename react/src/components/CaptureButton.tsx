@@ -1,13 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useCallback } from "react";
-import { useScreenshot } from "use-screenshot-hook";
-import { UseScreenshotProps } from "use-screenshot-hook/dist/types";
 import useCapture from "../hook/useCapture";
-import { PhotoType } from "../types/PrescriptionType";
-
 
 function CaptureButton({ setPhotoList, photoList }: any) {
-  const {clickCapture} = useCapture(setPhotoList, photoList, {eltype: "className", elname: 'single-main-container__canvas'});
+  // let captureTarget = 'single-main-container__canvas';
+  let captureTarget = 'grid-bg-photo';
+  console.log(captureTarget);
+  const {clickCapture} = useCapture(setPhotoList, photoList, {eltype: "id", elname: captureTarget});
 
 
   return (

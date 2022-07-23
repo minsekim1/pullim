@@ -1,5 +1,5 @@
 import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
-import { Socket, io } from "socket.io-client";
+import { Socket} from "socket.io-client";
 import Peer from "simple-peer";
 import { SourcePlayback } from "../core/helpers/sourceHelper";
 import { BackgroundConfig, backgroundImageUrls } from "../core/helpers/backgroundHelper";
@@ -9,17 +9,17 @@ import useBodyPix from "../core/hooks/useBodyPix";
 import useTFLite from "../core/hooks/useTFLite";
 import VirtualPhoto from "../components/VirtualPhoto";
 // const SOCKET_URL = "https://pul-lim.com/server";
-const SOCKET_URL = "http://localhost:5001";
+// const SOCKET_URL = "http://localhost:5001";
 
 interface ClientPropsType {
+  socketData: Socket;
   meetingNumber: string;
-  isHost: string;
-  userName: string;
+  myId: string;
 }
 
-function Client({ meetingNumber, isHost, userName }: ClientPropsType) {
+function Client({ socketData, meetingNumber, myId }: ClientPropsType) {
 
-  const [sourcePlayback, setSourcePlayback] = useState<SourcePlayback>();
+  const [sourcePlayback, setSourcePlayback] = useState<SourcePlayback|null>();
   const [backgroundConfig, setBackgroundConfig] = useState<BackgroundConfig>({
     type: "image",
     url: backgroundImageUrls[0],
@@ -42,21 +42,16 @@ function Client({ meetingNumber, isHost, userName }: ClientPropsType) {
   const bodyPix = useBodyPix();
   const { tflite, isSIMDSupported } = useTFLite(segmentationConfig);
 
-  const [myId, setMyId] = useState("");
   const [stream, setStream] = useState<MediaStream>();
-  const [socketData, setSocketData] = useState<Socket>();
-
   const [caller, setCaller] = useState("");
   const [receivingCall, setReceivingCall] = useState(false);
   const [callerSignal, setCallerSignal] = useState<Peer.SignalData | string>(
     ""
   );
-  const [isLoading, setLoading] = useState(false);
+  const [isChecking, setChecking] = useState(false);
+
   const myVideo = useRef() as React.LegacyRef<HTMLVideoElement> &
     React.MutableRefObject<HTMLVideoElement>;
-  const connection = useRef<Peer.Instance>();
-
-  let websocket: Socket | undefined = undefined;
 
   useEffect(() => {
     navigator.mediaDevices
@@ -66,88 +61,110 @@ function Client({ meetingNumber, isHost, userName }: ClientPropsType) {
         console.log(stream);
         myVideo.current.srcObject = stream;
       });
-    if (websocket === undefined) {
-      websocket = io(SOCKET_URL, {
-        path: "/socket.io", // 서버 path와 일치시켜준다
-        transports: ["websocket"],
-      });
+    
+    socketData.emit("hello", {room_id: meetingNumber, from: myId});
 
-      websocket.on("connect", () => {
-        console.info("connect!");
-        if (websocket !== undefined)
-          websocket.emit(
-            "join",
-            JSON.stringify({ room_id: meetingNumber, isHost, userName })
-          );
-      });
-
-      websocket.on("getid", (id) => {
-        setMyId(id);
-      });
-
-      websocket.on("disconnect", () => console.info("disconnect!"));
-
-      websocket.on("caller", (data) => {
-        setReceivingCall(true);
-        setCaller(data.from);
-        setCallerSignal(data.signal);
-        console.log(data);
-      });
-      setSocketData(websocket);
-    }
-  }, []);
+    socketData.on("caller", (data) => {
+      setReceivingCall(true);
+      setCaller(data.from);
+      setCallerSignal(data.signal);
+      console.log(data);
+    });
+  },[]);
 
   useEffect(() => {
-    if (receivingCall && caller && callerSignal && socketData) {
+    if (receivingCall && caller!=='' && callerSignal!=='' && socketData) {
       const peer = new Peer({
         initiator: false,
         trickle: false,
         stream: stream,
       });
+      
       peer.on("signal", (data) => {
         socketData.emit("answerCall", { signal: data, to: caller });
       });
       peer.signal(callerSignal);
-      connection.current = peer;
+      
+      // connection.current = peer;
     }
-  }, [caller, callerSignal, receivingCall, socketData, stream]);
+  }, [caller, callerSignal, meetingNumber, myId, receivingCall, socketData, stream]);
 
-  function handleVideoLoad(event: SyntheticEvent) {
-    const video = event.target as HTMLVideoElement
-    setSourcePlayback({
-      htmlElement: video,
-      width: video.videoWidth,
-      height: video.videoHeight,
-    })
-    setLoading(false)
-    console.log(video);
-  }
-
+  useEffect(() => {
+    socketData.on('startcheck', () => {
+      const userRes = window.confirm("지금부터 검사를 시작하겠습니다.");
+      if(userRes){
+        socketData.emit('startok', {
+          room_id: meetingNumber,
+          from: myId,
+        });
+        const video = myVideo.current;
+        setSourcePlayback({
+          htmlElement: video,
+          width: video.videoWidth,
+          height: video.videoHeight,
+        });
+        setChecking(true);
+      }
+    });
+    socketData.on('endcheck', () => {
+      window.alert('검사가 종료되었습니다.');
+      setChecking(false);
+      setSourcePlayback(null);
+    });
+  },[]);
 
   return (
-    <div>
-      <div style={{ width: "100%", height: "100%"}}>
-        {isLoading && <progress></progress>}
-        <video
-          ref={myVideo}
-          style={{ width: "100%", height: "100%", visibility: "hidden", position: "absolute"}}
-          playsInline
-          autoPlay
-          muted
-          onLoadedData={handleVideoLoad}
-        />
-      </div>
-      {sourcePlayback && tflite && bodyPix && (
-          <VirtualPhoto
-            sourcePlayback={sourcePlayback}
-            backgroundConfig={backgroundConfig}
-            segmentationConfig={segmentationConfig}
-            postProcessingConfig={postProcessingConfig}
-            bodyPix={bodyPix}
-            tflite={tflite}
+    <>
+      { isChecking &&
+        <header style={{
+          fontWeight: "bold",
+          zIndex: "100",
+          color: "white",
+          position: "absolute",
+          top: 10,
+          left: 10
+        }}>🔴 검사 중</header>
+      }
+      <div style={{
+        width: "400px",
+        position: "absolute",
+        top: 0,
+        zIndex: 1,
+        right: 0,
+      }}>
+        <div style={{ width: "100%", height: "100%"}}>
+          <video
+            ref={myVideo}
+            style={{ width: "100%", height: "100%", visibility: "hidden", position: "absolute"}}
+            playsInline
+            autoPlay
+            muted
           />
+        </div>
+      </div>
+        {sourcePlayback && tflite && bodyPix && (
+          <div style={{
+            zIndex: "99",
+            position: "absolute",
+            top: 0,
+            width: "100%",
+            height: "100%",
+            background: "black",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}>
+            <VirtualPhoto
+              sourcePlayback={sourcePlayback}
+              backgroundConfig={backgroundConfig}
+              segmentationConfig={segmentationConfig}
+              postProcessingConfig={postProcessingConfig}
+              bodyPix={bodyPix}
+              tflite={tflite}
+            />
+          </div>
         )}
-    </div>
+    </>
   );
 }
 

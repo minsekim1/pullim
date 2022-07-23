@@ -40,7 +40,7 @@ function VirtualPhoto(props: VirtualPhotoPropsType) {
 
   return (
     <>
-      <div style={{ width: "400px", height: "250px", position: "absolute", right: "0"}}>
+      <div style={{ width: "600px", height: "375px", position: "absolute"}}>
         {props.backgroundConfig.type === "image" && (
           <img
             ref={backgroundImageRef}
