@@ -1,6 +1,6 @@
-const JWT = require('jsonwebtoken');
-const crypto = require('crypto');
-const axios = require('axios').default;
+import JWT from'jsonwebtoken';
+import crypto from 'crypto';
+import axios from 'axios';
 
 // const API_KEY1= "vW7c2BXWRz-8M1C1ivprFQ"
 // const API_SEC1= "agQZXmkJmTBcKZe91jSULBTgMROeDTTnSerB"
@@ -27,7 +27,7 @@ const meetingdetails = { // 줌미팅 상세설정
     }
 }
 
-function generateToken(API_KEY, API_SEC){ //JWT토큰 생성
+function generateToken(API_KEY: any, API_SEC: any){ //JWT토큰 생성
     const timestamp = new Date().getTime();
     const header = {
         "alg":"HS256",
@@ -48,7 +48,7 @@ function generateToken(API_KEY, API_SEC){ //JWT토큰 생성
     return encodedHeader + '.' + encodedPayload + '.' + signature //JWT Token
 }
 
-function createMeeting(API_KEY,API_SEC){ //줌링크 생성
+function createMeeting(API_KEY: any, API_SEC: any){ //줌링크 생성
     const headers = {
         'authorization': 'Bearer ' + generateToken(API_KEY, API_SEC), //'Bearer' + JWT토큰
         'content-type': 'application/json'
@@ -66,4 +66,4 @@ function createMeeting(API_KEY,API_SEC){ //줌링크 생성
 //     console.log(data.data.join_url)
 // ))
 
-module.exports = { createMeeting }
+export { createMeeting }

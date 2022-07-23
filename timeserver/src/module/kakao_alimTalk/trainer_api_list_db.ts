@@ -1,4 +1,4 @@
-const db = require('../database/models/index');
+const db = require('../../kakaotest/database/models/index');
 const cron = require('node-cron');
 
 cron.schedule('0-59 * * * *', async() => {

@@ -1,7 +1,7 @@
-const cron = require('node-cron');
-const {zoomStartMsg, zoomEarlyMsg, zoomLink} = require('./template_list');
-const sendKakaoMessage = require('./kakao_alim');
-const { createMeeting } = require('../../zoomLink/create_zoomLink/zoom_meeting');
+import cron from 'node-cron';
+import {zoomStartMsg, zoomEarlyMsg, zoomLink} from './template_list';
+import sendKakaoMessage from './kakao_alim';
+import { createMeeting } from '../zoom/zoom_meeting';
 
 
 cron.schedule('0-59 * * * *', async() => {  //10분마다 실행

@@ -1,6 +1,6 @@
-const Sequelize = require('sequelize');
+import Sequelize from 'sequelize';
 
-module.exports = class Reservation_list extends Sequelize.Model {
+export default class Reservation_list extends Sequelize.Model {
     static init(sequelize) {
         return super.init({
             id:{

@@ -1,4 +1,19 @@
-const zoomStartMsg = {
+interface ZoomMsgType {
+    type?: string;
+    templateCode?: string;
+    to: string,
+    data: {
+        name:string;
+        restime?: string;
+        mmdd: string;
+        hhmm: string;
+        trainer:string;
+        URL?:string;
+        time?: string;
+    }   
+}
+
+const zoomStartMsg: ZoomMsgType = {
     templateCode: '12',
     to: 'num',
     data: {
@@ -10,7 +25,7 @@ const zoomStartMsg = {
     }   
 }
 
-const zoomEarlyMsg = {
+const zoomEarlyMsg: ZoomMsgType = {
     templateCode: '13',
     to: 'num',
     data: {
@@ -22,7 +37,7 @@ const zoomEarlyMsg = {
     }   
 }
 
-const zoomLink = {
+const zoomLink: ZoomMsgType = {
     templateCode: '14',
     to: 'num',
     data: {
@@ -34,5 +49,4 @@ const zoomLink = {
         URL:''
     }   
 }
-
-module.exports = {zoomStartMsg, zoomEarlyMsg, zoomLink}
+export {zoomStartMsg, zoomEarlyMsg, zoomLink, ZoomMsgType};

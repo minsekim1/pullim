@@ -1,8 +1,8 @@
 'use strict';
 
-const Sequelize = require('sequelize');
-const Reservation_list = require('./reservation_list');
-const Trainer_api_list = require('./trainer_api_list');
+import Sequelize from 'sequelize';
+import Reservation_list from './reservation_list';
+import Trainer_api_list from './trainer_api_list';
 
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
@@ -32,4 +32,4 @@ Trainer_api_list.associate(db);
 // // Promise.resolve(value)
 // console.log('---------------------------')
 
-module.exports = db;
+export default db;

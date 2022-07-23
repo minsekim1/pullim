@@ -1,6 +1,12 @@
-const Sequelize = require('sequelize');
+import Sequelize, {Model, Optional} from 'sequelize';
 
-module.exports = class Trainer_api_list extends Sequelize.Model {
+interface TrainerApiAttributes {
+    trainer_phone: string;
+    api_key: string;
+    api_sec: string;
+}
+
+export default class Trainer_api_list extends Model<TrainerApiAttributes> {
     static init(sequelize) {
         return super.init({
             trainer_phone:{
